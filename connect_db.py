@@ -45,7 +45,6 @@ class Sql:
     def take_worker(self, id_c):
         cursor = self.cnxn.cursor()
         zapros = "SELECT log_, pas_ FROM employe WHERE Id_c = " + str(id_c) +";"
-        print(zapros)
         cursor.execute(zapros)
         data = make_arr_list(cursor.fetchall())
         datas = []
@@ -67,7 +66,6 @@ class Sql:
     def take_adm(self, id_c):
         cursor = self.cnxn.cursor()
         zapros = "SELECT log_, pas_ FROM administ WHERE Id_k = " + str(id_c) + ";"
-        print(zapros)
         cursor.execute(zapros)
         data = cursor.fetchall()
         datas = []
@@ -108,10 +106,18 @@ class Sql:
     def del_user(self, Id_c, log_):
         cursor = self.cnxn.cursor()
         zapros = "DELETE FROM employe WHERE Id_c = " + str(Id_c) + " AND log_='" + log_ + "';"
-        print(zapros)
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
+
+    def make_arr_nazv(self, id_c):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT nazv FROM project WHERE Id_c = " + str(id_c) + ";"
+        cursor.execute(zapros)
+        data = make_arr_list(cursor.fetchall())
+        for i in range(len(data)):
+            data[i] = del_probel(data[i])
+        return data
 
 def make_arr_list(arr):
     arr2 = []
