@@ -1,5 +1,4 @@
-#from win_choice_project import *
-#следующее подключение
+from win_choice_project import *
 from win_for_ad import *
 from connect_db import sql
 
@@ -48,16 +47,16 @@ class App(CTk.CTk):
             if (l_p[i].log_ == self.login.get()) and (l_p[i].pas_ == self.passw.get()):
                 self.withdraw()
                 #Открытие следующего окна
-                #b = win_choice_project()
-                #b.mainloop()
+                b = win_choice_project(self.id_c)
+                b.mainloop()
                 prov = False
         l_p = sql.take_adm(self.id_c)
         for i in range(len(l_p)):
             if (l_p[i].log_ == self.login.get()) and (l_p[i].pas_ == self.passw.get()):
                 self.withdraw()
                 #Открытие следующего окна
-                #b = win_choice_project()
-                #b.mainloop()
+                b = win_choice_project(self.id_c)
+                b.mainloop()
                 prov = False
         if prov:
             mb.showerror("Ошибка!", "Введены неправильные данные логина и пароля, либо неправильно выбрана компания")
