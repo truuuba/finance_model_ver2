@@ -41,11 +41,11 @@ class win_for_ad(CTk.CTk):
         
         self.password = CTk.CTkLabel(master=self, text="Пароль")
         self.password.grid(row=10, column=0, padx=(0, 0), pady=(0,0))
-        self.pas = CTk.CTkEntry(master=self, show="*")
+        self.pas = CTk.CTkEntry(master=self)
         self.pas.grid(row=11, column=0, padx=(0, 0), pady=(0,0))
         
-        self.add_user = CTk.CTkButton(master=self, text="Добавить", command=self.add_user)
-        self.add_user.grid(row=12, column=0, padx=(10, 10), pady=(10, 10))
+        self.add_user_but = CTk.CTkButton(master=self, text="Добавить", command=self.add_user)
+        self.add_user_but.grid(row=12, column=0, padx=(10, 10), pady=(10, 10))
 
         self.del_proekt = CTk.CTkLabel(master=self, text="Удаление проекта")
         self.del_proekt.grid(row=1, column=2, padx=(0,0), pady=(0,0))
