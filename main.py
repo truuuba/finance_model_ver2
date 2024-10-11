@@ -1,9 +1,5 @@
 from win_choice_project import *
 from win_for_ad import *
-from connect_db import sql
-
-CTk.set_appearance_mode("dark")
-CTk.set_default_color_theme("green")
 
 class App(CTk.CTk):
     def __init__(self):
@@ -78,4 +74,3 @@ class App(CTk.CTk):
 if __name__ == "__main__":
     app = App()
     app.mainloop()
-    
