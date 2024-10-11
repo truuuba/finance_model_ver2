@@ -10,6 +10,13 @@ class employe:
         self.log_ = log_
         self.pas_ = pas_
 
+class stati:
+    def __init__(self, id_, id_st, code, nazv):
+        self.id_ = id_
+        self.id_st = id_st
+        self.code = code
+        self.nazv = nazv
+
 class Sql:
     def __init__(self, database="FM_model", server=r"NODE2\DBLMSSQLSRV", username="connect_FM_model", password=r"9*%dA6lU&T6)p2PX", driver="ODBC Driver 17 for SQL Server"):
         connectionString = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
@@ -46,7 +53,7 @@ class Sql:
         cursor = self.cnxn.cursor()
         zapros = "SELECT log_, pas_ FROM employe WHERE Id_c = " + str(id_c) +";"
         cursor.execute(zapros)
-        data = make_arr_list(cursor.fetchall())
+        data = cursor.fetchall()
         datas = []
         for i in range(len(data)):
             el = employe(log_ = data[i][0], pas_= data[i][1])
@@ -118,6 +125,34 @@ class Sql:
         for i in range(len(data)):
             data[i] = del_probel(data[i])
         return data
+    
+    def take_list_st_2(self):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM st_2_ur WHERE st_2_ur.Id_st_1 <> 4 AND st_2_ur.Id_st_1 <> 8;"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stati(id_ = data[i][0], id_st = data[i][1], code = data[i][2], nazv = data[i][3])
+            datas.append(el)
+        for el in datas:
+            el.code = del_probel(el.code)
+            el.nazv = del_probel(el.nazv)
+        return datas
+
+    def take_list_st_3(self, id_st):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM st_3_ur WHERE st_3_ur.Id_st_2 = " + str(id_st) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stati(id_ = data[i][0], id_st = data[i][1], code = data[i][2], nazv = data[i][3])
+            datas.append(el)
+        for el in datas:
+            el.code = del_probel(el.code)
+            el.nazv = del_probel(el.nazv)
+        return datas
 
 def make_arr_list(arr):
     arr2 = []
