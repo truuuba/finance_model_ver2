@@ -1,8 +1,5 @@
 from win_new_project import *
 
-CTk.set_appearance_mode("dark")
-CTk.set_default_color_theme("green")
-
 class win_choice_project(CTk.CTk):
     def __init__(self, id_c):
         super().__init__()
@@ -10,13 +7,14 @@ class win_choice_project(CTk.CTk):
         self.title("ФМ Калькулятор")
         self.resizable(True, True)
         self.protocol('WM_DELETE_WINDOW', self._done)
+        self.id_c = id_c
 
         self.ch_lab = CTk.CTkLabel(master=self, text="Выберите проект или создайте новый")
         self.ch_lab.grid(row=0, column=0, padx=(0,0))
 
         self.old_pr_lab = CTk.CTkLabel(master=self, text="Текущие проекты")
         self.old_pr_lab.grid(row=3, column=0, padx=(0,0))
-        arr = sql.make_arr_nazv(id_c)
+        arr = self.make_list_nazv()
         self.old_pr = CTk.CTkComboBox(master=self, values=arr)                                                  
         self.old_pr.grid(row=4, column=0, padx=(0,0))
         
@@ -38,6 +36,12 @@ class win_choice_project(CTk.CTk):
         self.withdraw()
         c = win_new_project()
         c.mainloop()
+
+    def make_list_nazv(self):
+        arr = sql.make_arr_nazv(self.id_c)
+        if len(arr) == 0:
+            arr = ['Проекты отсутствуют']
+        return arr
     
 
 
