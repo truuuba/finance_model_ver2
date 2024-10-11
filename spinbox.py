@@ -5,12 +5,10 @@ class Spinbox(CTk.CTkFrame):
                  width: int = 100,
                  height: int = 32,
                  step_size: int = 1,
-                 command: None,
                  **kwargs):
         super().__init__(*args, width=width, height=height, **kwargs)
 
         self.step_size = step_size
-        self.command = command
 
         self.configure(fg_color=("gray78", "gray28"))  # set frame color
 
@@ -32,31 +30,22 @@ class Spinbox(CTk.CTkFrame):
         self.entry.insert(0, "0")
 
     def add_button_callback(self):
-        if self.command is not None:
-            self.command()
-        try:
-            value = int(self.entry.get()) + self.step_size
-            self.entry.delete(0, "end")
-            self.entry.insert(0, value)
-        except ValueError:
-            return
+        value = int(self.entry.get()) + self.step_size
+        self.entry.delete(0, "end")
+        self.entry.insert(0, value)
+
 
     def subtract_button_callback(self):
-        if self.command is not None:
-            self.command()
-        try:
-            value = float(self.entry.get()) - self.step_size
-            self.entry.delete(0, "end")
-            self.entry.insert(0, value)
-        except ValueError:
-            return
+        value = int(self.entry.get()) - self.step_size
+        self.entry.delete(0, "end")
+        self.entry.insert(0, value)
 
     def get(self):
         try:
-            return float(self.entry.get())
+            return int(self.entry.get())
         except ValueError:
             return None
 
-    def set(self, value: float):
+    def set(self, value: int):
         self.entry.delete(0, "end")
         self.entry.insert(0, str(int(value)))
