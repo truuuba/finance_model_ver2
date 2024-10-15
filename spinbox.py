@@ -37,8 +37,9 @@ class Spinbox(CTk.CTkFrame):
 
     def subtract_button_callback(self):
         value = int(self.entry.get()) - self.step_size
-        self.entry.delete(0, "end")
-        self.entry.insert(0, value)
+        if value >= 0:
+            self.entry.delete(0, "end")
+            self.entry.insert(0, value)
 
     def get(self):
         try:
