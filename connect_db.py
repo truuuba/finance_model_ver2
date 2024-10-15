@@ -153,6 +153,21 @@ class Sql:
             el.code = del_probel(el.code)
             el.nazv = del_probel(el.nazv)
         return datas
+    
+    def take_list_obj(self):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM st_2_ur WHERE st_2_ur.Id_st_1 = 4;"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stati(id_ = data[i][0], id_st = data[i][1], code = data[i][2], nazv = data[i][3])
+            datas.append(el)
+        for el in datas:
+            el.code = del_probel(el.code)
+            el.nazv = del_probel(el.nazv)
+        return datas
+
 
 def make_arr_list(arr):
     arr2 = []
