@@ -1,4 +1,4 @@
-from win_new_project import *
+from win_choice_st import *
 
 class win_choice_project(CTk.CTk):
     def __init__(self, id_c):
@@ -34,7 +34,7 @@ class win_choice_project(CTk.CTk):
 
     def new_pr(self):
         self.withdraw()
-        c = win_new_project()
+        c = win_choice_stati()
         c.mainloop()
 
     def make_list_nazv(self):
