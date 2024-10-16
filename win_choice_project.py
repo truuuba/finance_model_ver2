@@ -34,7 +34,7 @@ class win_choice_project(CTk.CTk):
 
     def new_pr(self):
         self.withdraw()
-        c = win_choice_stati()
+        c = win_choice_stati(self.id_c)
         c.mainloop()
 
     def make_list_nazv(self):
@@ -42,6 +42,8 @@ class win_choice_project(CTk.CTk):
         if len(arr) == 0:
             arr = ['Проекты отсутствуют']
         return arr
+    
+
     
 
 
