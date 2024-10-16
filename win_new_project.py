@@ -2,11 +2,6 @@ from spinbox import Spinbox
 import re
 from win_upload_org import *
 
-'''
-Необходимо понять в каком виде стоит добавлять данные в базу
-При наличии структуры добавить данные в БД
-'''
-
 class Object_str(CTk.CTkScrollableFrame):
     def __init__(self, master, obj):
         super().__init__(master, width=400, height=350)
@@ -41,13 +36,14 @@ class Object_str(CTk.CTkScrollableFrame):
         obj.append(self.counter_pd)
 
 class win_new_project(CTk.CTk):
-    def __init__(self):
+    def __init__(self, id_p):
         super().__init__()
         self.geometry("1200x700")
         self.title("ФМ Калькулятор")
         self.resizable(True, True)
         self.protocol('WM_DELETE_WINDOW', self._done)
         self.obj = []
+        self.id_p = id_p
 
         self.ttle = CTk.CTkLabel(master=self, text="Введите данные по объектам и организациям")
         self.ttle.grid(row=0, column=0, padx=(5,5), pady=(15,5))
@@ -76,6 +72,6 @@ class win_new_project(CTk.CTk):
 
         if prov:
             self.withdraw()
-            a = win_upload_org(cnt_k=list_cnt[0], cnt_s=list_cnt[1], cnt_d=list_cnt[2], cnt_med=list_cnt[3], cnt_p=list_cnt[4])
+            a = win_upload_org(self.id_p, cnt_k=list_cnt[0], cnt_s=list_cnt[1], cnt_d=list_cnt[2], cnt_med=list_cnt[3], cnt_p=list_cnt[4])
             a.mainloop()
 
