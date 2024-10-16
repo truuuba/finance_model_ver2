@@ -1,11 +1,10 @@
 from win_new_project import *
 
 class Stati(CTk.CTkScrollableFrame):
-    def __init__(self, master, stat):
+    def __init__(self, master, stat, checkboxes):
         super().__init__(master, width=900, height=350)
         self.ttle = CTk.CTkLabel(master=self, text="Выберите общие статьи по всему проекту")
         self.ttle.grid(row=0, column=0, padx=(5,5), pady=(5,5))
-
         cnt = 1
         arr = sql.take_list_st_2()
         for el in arr:
@@ -17,16 +16,19 @@ class Stati(CTk.CTkScrollableFrame):
                 self.nazv2 = CTk.CTkCheckBox(master=self, text=(el2.code + " " + el2.nazv))
                 self.nazv2.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
                 stat.append(self.nazv2)
+                checkboxes.append(el2)
                 cnt += 1
 
 class win_choice_stati(CTk.CTk):
-    def __init__(self):
+    def __init__(self, id_c):
         super().__init__()
         self.geometry("1200x700")
         self.title("ФМ Калькулятор")
         self.resizable(True, True)
         self.protocol('WM_DELETE_WINDOW', self._done)
         self.stat = []
+        self.id_c = id_c
+        self.checkboxes = []
 
         self.nazvanie_proekta = CTk.CTkLabel(master=self, text='Введите название проекта')
         self.nazvanie_proekta.grid(row=0, column=0, padx=(5,5), pady=(5,5))
@@ -46,7 +48,7 @@ class win_choice_stati(CTk.CTk):
         self.ttle = CTk.CTkLabel(master=self, text="Добавление статей по всему проекту")
         self.ttle.grid(row=6, column=0, padx=(5,5), pady=(5,5))
 
-        self.win_stati = Stati(self, self.stat)
+        self.win_stati = Stati(self, self.stat, self.checkboxes)
         self.win_stati.grid(row=7, column=0, padx=(5,5), pady=(5,5))
 
         self.button_add = CTk.CTkButton(master=self, text="Добавление статей", command=self.change_win)
@@ -79,6 +81,12 @@ class win_choice_stati(CTk.CTk):
             mb.showerror("Ошибка!", "Не выбраны статьи проекта")
             prov = False
         if prov:
+            #Добавление проекта
+            id_p = sql.input_project(id_c=self.id_c, nazv=nazv_p, yr_str=yr_start, mnt_str=self.en_mnt.get())
+            #Добавление общих статей проекта
+            for i, el in enumerate(self.stat):
+                if el.get():
+                    sql.input_obsh_stati(id_p=id_p, id_st_3=self.checkboxes[i].id_)
             self.withdraw()
-            a = win_new_project()
+            a = win_new_project(id_p)
             a.mainloop()
