@@ -128,7 +128,7 @@ class Sql:
     
     def take_list_st_2(self):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT * FROM st_2_ur WHERE st_2_ur.Id_st_1 <> 4 AND st_2_ur.Id_st_1 <> 8;"
+        zapros = "SELECT * FROM st_2_ur WHERE st_2_ur.Id_st_1 = 1 OR st_2_ur.Id_st_1 = 2 OR st_2_ur.Id_st_1 = 3 OR st_2_ur.Id_st_1 = 5;"
         cursor.execute(zapros)
         data = cursor.fetchall()
         datas = []
@@ -167,7 +167,23 @@ class Sql:
             el.code = del_probel(el.code)
             el.nazv = del_probel(el.nazv)
         return datas
-
+    
+    def input_project(self, id_c, nazv, yr_str, mnt_str):
+        cursor = self.cnxn.cursor()
+        id_ = sql.create_id("project")
+        zapros = "INSERT INTO project (ID, id_c, nazv, yr_str, mnt_str) VALUES (" + str(id_) + ", " + str(id_c) + ", '" + nazv + "', " + str(yr_str) + ", '" + mnt_str + "');"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+        return id_
+    
+    def input_obsh_stati(self, id_p, id_st_3):
+        cursor = self.cnxn.cursor()
+        id_ = sql.create_id("obsh_stati")
+        zapros = "INSERT INTO obsh_stati (ID, Id_p, Id_st_3) VALUES (" + str(id_) + ", " + str(id_p) + ", " + str(id_st_3) + ");"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
 
 def make_arr_list(arr):
     arr2 = []
