@@ -82,12 +82,13 @@ class Upload_obekt(CTk.CTkScrollableFrame):
                     cnt += 1
 
 class win_upload_org(CTk.CTk):
-    def __init__(self, cnt_k, cnt_s, cnt_d, cnt_med, cnt_p):
+    def __init__(self, id_p, cnt_k, cnt_s, cnt_d, cnt_med, cnt_p):
         super().__init__()
         self.geometry("1200x700")
         self.title("ФМ Калькулятор")
         self.resizable(True, True)
         self.protocol('WM_DELETE_WINDOW', self._done)
+        self.id_p = id_p
 
         self.ttle = CTk.CTkLabel(master=self, text="Введите данные по объектам и организациям") 
         self.ttle.grid(row=0, column=0, padx=(5,5), pady=(5,5))
