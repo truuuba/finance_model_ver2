@@ -10,12 +10,22 @@ class employe:
         self.log_ = log_
         self.pas_ = pas_
 
-class stati:
+class stati_ur:
     def __init__(self, id_, id_st, code, nazv):
         self.id_ = id_
         self.id_st = id_st
         self.code = code
         self.nazv = nazv
+
+class obj_str:
+    def __init__(self, id_, nazv):
+        self.id_ = id_
+        self.nazv = nazv
+
+class stati:
+    def __init__(self, id_, id_o):
+        self.id_ = id_
+        self.id_o = id_o
 
 class Sql:
     def __init__(self, database="FM_model", server=r"NODE2\DBLMSSQLSRV", username="connect_FM_model", password=r"9*%dA6lU&T6)p2PX", driver="ODBC Driver 17 for SQL Server"):
@@ -133,7 +143,7 @@ class Sql:
         data = cursor.fetchall()
         datas = []
         for i in range(len(data)):
-            el = stati(id_ = data[i][0], id_st = data[i][1], code = data[i][2], nazv = data[i][3])
+            el = stati_ur(id_ = data[i][0], id_st = data[i][1], code = data[i][2], nazv = data[i][3])
             datas.append(el)
         for el in datas:
             el.code = del_probel(el.code)
@@ -147,7 +157,7 @@ class Sql:
         data = cursor.fetchall()
         datas = []
         for i in range(len(data)):
-            el = stati(id_ = data[i][0], id_st = data[i][1], code = data[i][2], nazv = data[i][3])
+            el = stati_ur(id_ = data[i][0], id_st = data[i][1], code = data[i][2], nazv = data[i][3])
             datas.append(el)
         for el in datas:
             el.code = del_probel(el.code)
@@ -161,7 +171,7 @@ class Sql:
         data = cursor.fetchall()
         datas = []
         for i in range(len(data)):
-            el = stati(id_ = data[i][0], id_st = data[i][1], code = data[i][2], nazv = data[i][3])
+            el = stati_ur(id_ = data[i][0], id_st = data[i][1], code = data[i][2], nazv = data[i][3])
             datas.append(el)
         for el in datas:
             el.code = del_probel(el.code)
@@ -184,6 +194,65 @@ class Sql:
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
+    
+    def input_obj_str(self, id_p, nazv):
+        cursor = self.cnxn.cursor()
+        id_ = sql.create_id("object_str")
+        zapros = "INSERT INTO object_str (ID, Id_p, nazv) VALUES (" + str(id_) + ", " + str(id_p) + ", '" + nazv + "');"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+    def take_obj_str(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, nazv FROM object_str WHERE Id_p = " + str(id_p) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = obj_str(data[i][0], data[i][1])
+            datas.append(el)
+        for el in datas:
+            el.nazv = del_probel(el.nazv)
+        return datas
+    
+    def input_st_obj(self, id_obj, id_st_3):
+        cursor = self.cnxn.cursor()
+        id_ = sql.create_id("obj_stati")
+        zapros = "INSERT INTO obj_stati (ID, Id_obj, Id_st_3) VALUES (" + str(id_) + ", " + str(id_obj) + ", " + str(id_st_3) + ");"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+    
+    def take_obsh_stati(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, Id_st_3 FROM obsh_stati WHERE Id_p = " + str(id_p)
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stati(data[i][0], data[i][1])
+            datas.append(el)
+        return datas
+    
+    def take_st_3(self, id_):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, Id_st_2, code, nazv FROM st_3_ur WHERE ID = " + str(id_)
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        el = stati_ur(data[0][0], data[0][1], data[0][2], data[0][3])
+        el.code = del_probel(el.code)
+        el.nazv = del_probel(el.nazv)
+        return el
+    
+    def input_gpr_obsh(self, id_st_obsh, zavisim, prod):
+        cursor = self.cnxn.cursor()
+        id_ = sql.create_id("GPR_obsh")
+        zapros = "INSERT INTO GPR_obsh (ID, Id_st_obsh, zavisim, prod) VALUES (" + str(id_) + ", " + str(id_st_obsh) + ", '" + zavisim + "', " + str(prod) + ");"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
 
 def make_arr_list(arr):
     arr2 = []
