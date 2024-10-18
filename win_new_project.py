@@ -1,5 +1,3 @@
-from spinbox import Spinbox
-import re
 from win_upload_org import *
 
 class Object_str(CTk.CTkScrollableFrame):
@@ -71,7 +69,19 @@ class win_new_project(CTk.CTk):
             prov = False
 
         if prov:
+            #Добавляем объекты строительства
+            for i in range(list_cnt[0]):
+                sql.input_obj_str(id_p=self.id_p, nazv=("Корпус №" + str(i+1)))
+            for i in range(list_cnt[1]):
+                sql.input_obj_str(id_p=self.id_p, nazv=("СОШ №" + str(i+1)))
+            for i in range(list_cnt[2]):
+                sql.input_obj_str(id_p=self.id_p, nazv=("ДОУ №" + str(i+1)))
+            for i in range(list_cnt[3]):
+                sql.input_obj_str(id_p=self.id_p, nazv=("Медучреждение №" + str(i+1)))
+            for i in range(list_cnt[4]):
+                sql.input_obj_str(id_p=self.id_p, nazv=("Пождепо №" + str(i+1)))
+
             self.withdraw()
-            a = win_upload_org(self.id_p, cnt_k=list_cnt[0], cnt_s=list_cnt[1], cnt_d=list_cnt[2], cnt_med=list_cnt[3], cnt_p=list_cnt[4])
+            a = win_upload_org(self.id_p)
             a.mainloop()
 
