@@ -226,7 +226,7 @@ class Sql:
     
     def take_obsh_stati(self, id_p):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT ID, Id_st_3 FROM obsh_stati WHERE Id_p = " + str(id_p)
+        zapros = "SELECT ID, Id_st_3 FROM obsh_stati WHERE Id_p = " + str(id_p) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
         datas = []
@@ -237,7 +237,7 @@ class Sql:
     
     def take_st_3(self, id_):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT ID, Id_st_2, code, nazv FROM st_3_ur WHERE ID = " + str(id_)
+        zapros = "SELECT ID, Id_st_2, code, nazv FROM st_3_ur WHERE ID = " + str(id_) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
         el = stati_ur(data[0][0], data[0][1], data[0][2], data[0][3])
