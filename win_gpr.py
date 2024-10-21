@@ -1,13 +1,6 @@
-import customtkinter as CTk
 from spinbox import Spinbox
-import os
-import sys
-from connect_db import sql
-import re
 from tkinter import messagebox as mb
-
-CTk.set_appearance_mode("dark")
-CTk.set_default_color_theme("green")
+from win_for_obj import *
 
 class GPR_obsh(CTk.CTkScrollableFrame):
     def __init__(self, master, id_p, entry_prod, entry_zavis, params_r):
@@ -48,10 +41,10 @@ class win_for_gpr(CTk.CTk):
 
         self.ttle = CTk.CTkLabel(master=self, text="Введите продолжительность и зависимоти по общим статьям")
         self.ttle.grid(row=1, column=0, padx=(5,5), pady=(5,5))
-        self.win_gpr = GPR_obsh(self, self.id_p, self.entry_prod, self.entry_zavis)
+        self.win_gpr = GPR_obsh(self, self.id_p, self.entry_prod, self.entry_zavis, self.params_r)
         self.win_gpr.grid(row=2, column=0, padx=(5,5), pady=(5,5))
 
-        self.but_next = CTk.CTkButton(master=self, text="Данные введены")
+        self.but_next = CTk.CTkButton(master=self, text="Данные введены", command=self.next_win)
         self.but_next.grid(row=3, column=0, padx=(5,5), pady=(5,5))
 
     def _done(self):
@@ -61,11 +54,19 @@ class win_for_gpr(CTk.CTk):
 
     def next_win(self):
         prov = True
+        list_zav = []
         for el in self.entry_zavis:
-            txt_zav = el.get()
-            match_nazv = re.match(r'^[0-9 ]*$', txt_zav)
-            if not(match_nazv):
+            txt_zav = self.del_probel(el.get())
+            if txt_zav == None:
+                txt_zav = ""
+            match_zav = re.match(r'^[0-9 ]*$', txt_zav)
+            if not(match_zav):
                 prov = False
+            elif txt_zav == "":
+                list_zav.append("0")
+            else:
+                list_zav.append(txt_zav)
+                
         for el in self.entry_prod:
             cnt = el.get()
             if (cnt == None) or (cnt == 0):
@@ -74,9 +75,18 @@ class win_for_gpr(CTk.CTk):
         if prov:
             #добавление данных в БД
             for i in range(len(self.params_r)):
-                sql.input_gpr_obsh(id_st_obsh=)
-
-            mb.showinfo('ура', 'работает')
+                sql.input_gpr_obsh(id_st_obsh=self.params_r[i].id_, zavisim=list_zav[i], prod=self.entry_prod[i].get())
             #Открытие следующего окна 
+            self.withdraw()
+            a = win_for_obj(id_p=self.id_p)
+            a.mainloop()
         else:
-            mb.showerror("Ошибка!", "Не для всех объектов выбраны статьи расходов")
+            mb.showerror("Ошибка!", "Не для всех статей выбраны параметры")
+
+    def del_probel(self, nm):
+        n = len(nm)
+        for j in range(n-1, 0, -1):
+            if nm[j] == " ":
+                nm = nm[:-1]
+            else:
+                return nm
