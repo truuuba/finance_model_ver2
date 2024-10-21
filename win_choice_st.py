@@ -80,6 +80,14 @@ class win_choice_stati(CTk.CTk):
         if len(list_stat) == 0:
             mb.showerror("Ошибка!", "Не выбраны статьи проекта")
             prov = False
+        
+        #Проверка на повтор названий проектов
+        list_nazv = sql.make_arr_nazv(self.id_c)
+        for el in list_nazv:
+            if el == nazv_p:
+                prov = False
+                mb.showerror("Ошибка!", "Проект с таким названием уже существует")
+        
         if prov:
             #Добавление проекта
             id_p = sql.input_project(id_c=self.id_c, nazv=nazv_p, yr_str=yr_start, mnt_str=self.en_mnt.get())
@@ -90,3 +98,4 @@ class win_choice_stati(CTk.CTk):
             self.withdraw()
             a = win_new_project(id_p)
             a.mainloop()
+
