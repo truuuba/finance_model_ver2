@@ -253,6 +253,12 @@ class Sql:
         self.cnxn.commit()
         cursor.close()
 
+    def input_ppo_in_obj(self, id_, prod_pl, stoim, kv_cnt, sr_pl_rassr, dol_ipoteka, dol_rassr, dol_full_pl, vsnos_rassr):
+        cursor = self.cnxn.cursor()
+        zapros = "UPDATE object_str SET prod_pl = " + str(prod_pl) + ", stoim = " + str(stoim) + ", kv_cnt = " + str(kv_cnt) + ", sr_pl_rassr = " + str(sr_pl_rassr) + ", dol_ipoteka = " + str(dol_ipoteka) + ", dol_rassr = " + str(dol_rassr) + ", dol_full_pl = " + str(dol_full_pl) + ", vsnos_rassr = " + str(vsnos_rassr) + " WHERE ID = " + str(id_) + ";"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
 
 def make_arr_list(arr):
     arr2 = []
