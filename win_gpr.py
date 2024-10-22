@@ -1,5 +1,4 @@
 from spinbox import Spinbox
-from tkinter import messagebox as mb
 from win_for_obj import *
 
 class GPR_obsh(CTk.CTkScrollableFrame):
