@@ -43,7 +43,7 @@ class win_new_project(CTk.CTk):
         self.obj = []
         self.id_p = id_p
 
-        self.ttle = CTk.CTkLabel(master=self, text="Введите данные по объектам и организациям")
+        self.ttle = CTk.CTkLabel(master=self, text="Введите данные по объектам")
         self.ttle.grid(row=0, column=0, padx=(5,5), pady=(15,5))
 
         self.objects = CTk.CTkLabel(master=self, text="Выберите объекты строительства")
@@ -84,4 +84,3 @@ class win_new_project(CTk.CTk):
             self.withdraw()
             a = win_upload_org(self.id_p)
             a.mainloop()
-
