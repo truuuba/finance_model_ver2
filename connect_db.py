@@ -259,6 +259,24 @@ class Sql:
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
+    
+    def input_posl_in_obj(self, posl_str, id_):
+        cursor = self.cnxn.cursor()
+        zapros = "UPDATE object_str SET posl_str = " + str(posl_str) + " WHERE ID = " + str(id_) + ";"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+    def take_obj_stati(self, id_obj):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, Id_st_3 FROM obj_stati WHERE Id_p = " + str(id_obj) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stati(data[i][0], data[i][1])
+            datas.append(el)
+        return datas
 
 def make_arr_list(arr):
     arr2 = []
