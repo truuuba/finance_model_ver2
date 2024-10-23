@@ -1,20 +1,10 @@
-import customtkinter as CTk
-import os
-import sys
-from connect_db import sql
-from tkinter import messagebox as mb
-import re
-
-CTk.set_appearance_mode("dark")
-CTk.set_default_color_theme("green")
+from win_for_posl import *
 
 class For_PPO(CTk.CTkScrollableFrame):
     def __init__(self, master, objects_, prod_pl, price, kvartiri, sr_pl_r, d_ipoteka, d_rassr, d_full_pl, vs_rassr):
         super().__init__(master, width=1100, height=500)
-        self.ttle = CTk.CTkLabel(master=self, text="Данные для ППО")
-        self.ttle.grid(row=0, column=0, padx=(5,5), pady=(5,5))
         #Данные по каждому объекту
-        cnt = 1
+        cnt = 0
         for el in objects_:
             self.ttle_obj = CTk.CTkLabel(master=self, text=el.nazv, bg_color="#E63946")
             self.ttle_obj.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
@@ -102,7 +92,7 @@ class win_for_obj(CTk.CTk):
             if match_obj:
                 self.objects_.append(el)
 
-        self.ttle = CTk.CTkLabel(master=self, text="Введите данные по организациям")
+        self.ttle = CTk.CTkLabel(master=self, text="Введите данные по объектам")
         self.ttle.grid(row=0, column=0, padx=(5,5), pady=(5,5))
 
         self.win_PPO = For_PPO(self, self.objects_, self.prod_pl, self.price, self.kvartiri, self.sr_pl_r, self.d_ipoteka, self.d_rassr, self.d_full_pl, self.vs_rassr)
@@ -131,7 +121,9 @@ class win_for_obj(CTk.CTk):
         if prov:
             for i in range(len(self.objects_)):
                 sql.input_ppo_in_obj(self.objects_[i].id_, prod_pl=self.prod_pl[i].get(), stoim=self.price[i].get(), kv_cnt=self.kvartiri[i].get(), sr_pl_rassr=self.d_rassr[i].get(), dol_ipoteka=self.d_ipoteka[i].get(), dol_rassr=self.d_rassr[i].get(), dol_full_pl=self.d_full_pl[i].get(), vsnos_rassr=self.vs_rassr[i].get())
-            mb.showinfo("Ура", "Работает")
+            self.withdraw()
+            a = win_for_posl(id_p=self.id_p)
+            a.mainloop()
         else:
             mb.showerror('Ошибка!', 'Некорректно введены данные по объектам')
 
@@ -139,15 +131,3 @@ class win_for_obj(CTk.CTk):
         self.destroy()
         os.system('main.py')
         sys.exit(0)
-
-'''
-            self.etap_str = CTk.CTkLabel(master=self, text="Введите этап строительтва *")
-            self.etap_str.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
-            cnt += 1
-            self.et_str = CTk.CTkEntry(master=self)
-            self.et_str.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
-            cnt += 1
-
-            self.prim = CTk.CTkLabel(master=self, text="Под этапом строительтва подразумевается порядок постройки, этап может включать несколько объектов")
-            self.prim.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
-'''
