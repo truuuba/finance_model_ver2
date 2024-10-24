@@ -1,13 +1,14 @@
 from win_gpr import *
 
 '''
-for_prov - массив с чекбоксами
+for_prov - массив с чекбоксами для защиты от ошибок
+checkboxes - массив с чекбоксами для добавления в БД
 id_obj - массив с айдишниками объектов
 id_st - массив с айдишниками статей
 '''
 
 class Upload_obekt(CTk.CTkScrollableFrame):
-    def __init__(self, master, list_ob_str, id_st, id_obj, for_prov):
+    def __init__(self, master, list_ob_str, id_st, id_obj, for_prov, check_box):
         super().__init__(master, width=1100, height=600)
         self.for_obj_2_st = sql.take_list_obj()
         id_st.clear()
@@ -34,6 +35,7 @@ class Upload_obekt(CTk.CTkScrollableFrame):
                     self.nazv2.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
                     id_st.append(el2.id_)
                     id_obj.append(elem.id_)
+                    check_box.append(self.nazv2)
                     checkboxes.append(self.nazv2)
                     cnt += 1
             for_prov.append(checkboxes)        
@@ -49,12 +51,13 @@ class win_upload_org(CTk.CTk):
         self.list_ob_str = sql.take_obj_str(id_p)
         self.id_obj = []
         self.id_st = []
+        self.check_box = []
         self.for_prov = []
 
         self.ttle = CTk.CTkLabel(master=self, text="Введите данные по объектам и организациям") 
         self.ttle.grid(row=0, column=0, padx=(5,5), pady=(5,5))
 
-        self.win_ob = Upload_obekt(self, self.list_ob_str, self.id_st, self.id_obj, self.for_prov)
+        self.win_ob = Upload_obekt(self, self.list_ob_str, self.id_st, self.id_obj, self.for_prov, self.check_box)
         self.win_ob.grid(row=1, column=0, padx=(5,5), pady=(5,5))
 
         self.but_next = CTk.CTkButton(master=self, text="Данные введены", command=self.next_win)
@@ -78,7 +81,9 @@ class win_upload_org(CTk.CTk):
         if prov2:
             #Добавляем статьи по объекту
             for i in range(len(self.id_st)):
-                sql.input_st_obj(self.id_obj[i], self.id_st[i])
+                #добавить проверку на выбор объекта 
+                if self.check_box[i].get():
+                    sql.input_st_obj(self.id_obj[i], self.id_st[i])
             self.withdraw()
             a = win_for_gpr(self.id_p)
             a.mainloop()
