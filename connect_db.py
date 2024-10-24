@@ -269,7 +269,7 @@ class Sql:
 
     def take_obj_stati(self, id_obj):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT ID, Id_st_3 FROM obj_stati WHERE Id_p = " + str(id_obj) + ";"
+        zapros = "SELECT ID, Id_st_3 FROM obj_stati WHERE Id_obj = " + str(id_obj) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
         datas = []
@@ -277,6 +277,14 @@ class Sql:
             el = stati(data[i][0], data[i][1])
             datas.append(el)
         return datas
+    
+    def input_gpr_obj(self, id_st_obj, zavisim, prod):
+        cursor = self.cnxn.cursor()
+        id_ = sql.create_id("GPR_obj")
+        zapros = "INSERT INTO GPR_obj (ID, Id_st_obj, zavisim, prod) VALUES (" + str(id_) + ", " + str(id_st_obj) + ", '" + zavisim + "', " + str(prod) + ");"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
 
 def make_arr_list(arr):
     arr2 = []
