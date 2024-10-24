@@ -43,6 +43,9 @@ class win_choice_project(CTk.CTk):
             arr = ['Проекты отсутствуют']
         return arr
     
+    def open_tables(self):
+        val = self.old_pr.get()
+    
 
     
 
