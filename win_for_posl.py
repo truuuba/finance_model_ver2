@@ -1,5 +1,3 @@
-import re
-from tkinter import messagebox as mb
 from win_for_obj_gpr import *
 
 class win_zavisim(CTk.CTkScrollableFrame):
@@ -47,7 +45,9 @@ class win_for_posl(CTk.CTk):
         if prov:
             for i in range(len(self.list_obj)):
                 sql.input_posl_in_obj(id_=self.list_obj[i].id_, posl_str=self.list_posl[i].get())
-            mb.showinfo("ура", "работает")
+            self.withdraw()
+            a = win_for_obj_gpr(id_p=self.id_p)
+            a.mainloop()
 
     def _done(self):
         self.destroy()
