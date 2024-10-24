@@ -9,7 +9,7 @@ class Stati(CTk.CTkScrollableFrame):
         arr = sql.take_list_st_2()
         for el in arr:
             self.nazv = CTk.CTkLabel(master=self, text=(el.code + " " + el.nazv))
-            self.nazv.grid(row=cnt, column=0, padx=(5,5), pady=(15,15))
+            self.nazv.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
             cnt += 1
             arr2 = sql.take_list_st_3(el.id_)
             for el2 in arr2:
