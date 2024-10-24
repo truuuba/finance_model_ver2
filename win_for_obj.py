@@ -7,62 +7,62 @@ class For_PPO(CTk.CTkScrollableFrame):
         cnt = 0
         for el in objects_:
             self.ttle_obj = CTk.CTkLabel(master=self, text=el.nazv, bg_color="#E63946")
-            self.ttle_obj.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
+            self.ttle_obj.grid(row=cnt, column=0, padx=(5,5), pady=(10,10))
             cnt += 1
             self.prod_pl = CTk.CTkLabel(master=self, text="Продаваемая площадь, в кв/м")
-            self.prod_pl.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
+            self.prod_pl.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
             cnt += 1
             self.pr_pl = CTk.CTkEntry(master=self)
-            self.pr_pl.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
+            self.pr_pl.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
             cnt += 1
             prod_pl.append(self.pr_pl)
             self.stoim_kv_m = CTk.CTkLabel(master=self, text="Цена за квадратный метр, в рублях")
-            self.stoim_kv_m.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
+            self.stoim_kv_m.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
             cnt += 1
             self.stoim = CTk.CTkEntry(master=self)
-            self.stoim.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
+            self.stoim.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
             cnt += 1
             price.append(self.stoim)
             self.cnt_kvart = CTk.CTkLabel(master=self, text="Количество квартир")
-            self.cnt_kvart.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
+            self.cnt_kvart.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
             cnt += 1
             self.cnt_kv = CTk.CTkEntry(master=self)
-            self.cnt_kv.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
+            self.cnt_kv.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
             cnt += 1
             kvartiri.append(self.cnt_kv)
             self.sr_platej_rassr = CTk.CTkLabel(master=self, text="Средний ежемесячный платеж по рассрочке (в тысячах рублях)")
-            self.sr_platej_rassr.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
+            self.sr_platej_rassr.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
             cnt += 1
             self.sr_pl_r = CTk.CTkEntry(master=self)
-            self.sr_pl_r.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
+            self.sr_pl_r.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
             cnt += 1
             sr_pl_r.append(self.sr_pl_r)
             self.dol_ipoteka = CTk.CTkLabel(master=self, text="Доля договоров по ипотеке (в процентах)")
-            self.dol_ipoteka.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
+            self.dol_ipoteka.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
             cnt += 1
             self.d_ip = CTk.CTkEntry(master=self)
-            self.d_ip.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
+            self.d_ip.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
             cnt += 1
             d_ipoteka.append(self.d_ip)
             self.dol_rassr_pl = CTk.CTkLabel(master=self, text="Доля договоров с рассрочкой платежа (в процентах)")
-            self.dol_rassr_pl.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
+            self.dol_rassr_pl.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
             cnt += 1
             self.d_rass_pl = CTk.CTkEntry(master=self)
-            self.d_rass_pl.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
+            self.d_rass_pl.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
             cnt += 1
             d_rassr.append(self.d_rass_pl)
             self.d_full_oplata = CTk.CTkLabel(master=self, text="Доля договоров по полной предоплате (в процентах)")
-            self.d_full_oplata.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
+            self.d_full_oplata.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
             cnt += 1
             self.d_f_opl = CTk.CTkEntry(master=self)
-            self.d_f_opl.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
+            self.d_f_opl.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
             cnt += 1
             d_full_pl.append(self.d_f_opl)
             self.perv_vsnos_rassr = CTk.CTkLabel(master=self, text="Первоначальный взнос по рассрочке (в процентах)")
-            self.perv_vsnos_rassr.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
+            self.perv_vsnos_rassr.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
             cnt += 1
             self.p_vs_r = CTk.CTkEntry(master=self)
-            self.p_vs_r.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
+            self.p_vs_r.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
             cnt += 1
             vs_rassr.append(self.p_vs_r)
 
