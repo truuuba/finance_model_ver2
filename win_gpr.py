@@ -1,8 +1,8 @@
 from win_for_obj import *
 
 class GPR_obsh(CTk.CTkScrollableFrame):
-    def __init__(self, master, entry_prod, entry_zavis, params_r):
-        super().__init__(master, width=1100, height=500)
+    def __init__(self, master, entry_prod, entry_zavis, params_r, indexes):
+        super().__init__(master, width=1150, height=500)
         self.w = CTk.CTkLabel(master=self, text="Параметры работ")
         self.w.grid(row=0, column=0, padx=(5,5), pady=(5,5))
         self.pr = CTk.CTkLabel(master=self, text="Продолжительность работ в месяцах")
@@ -10,9 +10,11 @@ class GPR_obsh(CTk.CTkScrollableFrame):
         self.zav = CTk.CTkLabel(master=self, text="Зависимости от процессов (пишите номера процессов через пробел)")
         self.zav.grid(row=0, column=2, padx=(5,5), pady=(5,5))
         n = len(params_r)
+        cnt = 1
         for i in range(n):
             data_st = sql.take_st_3(params_r[i].id_o)
-            self.work = CTk.CTkLabel(master=self, text=(data_st.code + " " + data_st.nazv))
+            indexes.append(cnt)
+            self.work = CTk.CTkLabel(master=self, text=(str(cnt) + ". " + data_st.nazv))
             self.work.grid(row=i+1, column=0, padx=(5,5), pady=(5,5))
             self.prodolj = Spinbox(self)
             self.prodolj.grid(row=i+1, column=1, padx=(5,5), pady=(5,5))
@@ -20,6 +22,7 @@ class GPR_obsh(CTk.CTkScrollableFrame):
             self.zavis = CTk.CTkEntry(master=self)
             self.zavis.grid(row=i+1, column=2, padx=(5,5), pady=(5,5))
             entry_zavis.append(self.zavis)
+            cnt += 1
 
 class win_for_gpr(CTk.CTk):
     def __init__(self, id_p):
@@ -32,17 +35,20 @@ class win_for_gpr(CTk.CTk):
         self.entry_prod = []
         self.entry_zavis = []
         self.params_r = sql.take_obsh_stati(id_p)
+        self.indexes = []
 
         self.make_gpr = CTk.CTkLabel(master=self, text="Создание ГПР по общим статьям")
         self.make_gpr.grid(row=0, column=0, padx=(5,5), pady=(5,5))
 
         self.ttle = CTk.CTkLabel(master=self, text="Введите продолжительность и зависимоти по общим статьям")
         self.ttle.grid(row=1, column=0, padx=(5,5), pady=(5,5))
-        self.win_gpr = GPR_obsh(self, self.entry_prod, self.entry_zavis, self.params_r)
+        self.win_gpr = GPR_obsh(self, self.entry_prod, self.entry_zavis, self.params_r, self.indexes)
         self.win_gpr.grid(row=2, column=0, padx=(5,5), pady=(5,5))
-
+        self.prim = CTk.CTkLabel(master=self, text="В качестве номеров процессов указывайте те, что выведены сейчас, а не те, что находятся в кодификаторе", bg_color="#E63946")
+        self.prim.grid(row=3, column=0, padx=(5,5), pady=(5,5))
+        
         self.but_next = CTk.CTkButton(master=self, text="Данные введены", command=self.next_win)
-        self.but_next.grid(row=3, column=0, padx=(5,5), pady=(5,5))
+        self.but_next.grid(row=4, column=0, padx=(5,5), pady=(5,5))
 
     def _done(self):
         self.destroy()
@@ -72,7 +78,7 @@ class win_for_gpr(CTk.CTk):
         if prov:
             #добавление данных в БД
             for i in range(len(self.params_r)):
-                sql.input_gpr_obsh(id_st_obsh=self.params_r[i].id_, zavisim=list_zav[i], prod=self.entry_prod[i].get())
+                sql.input_gpr_obsh(id_st_obsh=self.params_r[i].id_, zavisim=list_zav[i], prod=self.entry_prod[i].get(), ind=self.indexes[i])
             #Открытие следующего окна 
             self.withdraw()
             a = win_for_obj(id_p=self.id_p)
