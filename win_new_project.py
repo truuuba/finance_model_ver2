@@ -1,8 +1,8 @@
 from win_upload_org import *
 
-class Object_str(CTk.CTkScrollableFrame):
+class Object_str(CTk.CTkFrame):
     def __init__(self, master, obj):
-        super().__init__(master, width=400, height=350)
+        super().__init__(master, width=400, height=550)
         self.ttle_korp = CTk.CTkLabel(master=self, text="Выберите количество корпусов")
         self.ttle_korp.grid(row=0, padx=(5,5), pady=(5,5))
         self.counter_k = Spinbox(self)
