@@ -245,17 +245,17 @@ class Sql:
         el.nazv = del_probel(el.nazv)
         return el
     
-    def input_gpr_obsh(self, id_st_obsh, zavisim, prod):
+    def input_gpr_obsh(self, id_st_obsh, zavisim, prod, ind):
         cursor = self.cnxn.cursor()
         id_ = sql.create_id("GPR_obsh")
-        zapros = "INSERT INTO GPR_obsh (ID, Id_st_obsh, zavisim, prod) VALUES (" + str(id_) + ", " + str(id_st_obsh) + ", '" + zavisim + "', " + str(prod) + ");"
+        zapros = "INSERT INTO GPR_obsh (ID, Id_st_obsh, zavisim, prod, ind) VALUES (" + str(id_) + ", " + str(id_st_obsh) + ", '" + zavisim + "', " + str(prod) + ", " + str(ind) + ");"
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
 
-    def input_ppo_in_obj(self, id_, prod_pl, stoim, kv_cnt, sr_pl_rassr, dol_ipoteka, dol_rassr, dol_full_pl, vsnos_rassr):
+    def input_ppo_in_obj(self, id_, prod_pl, stoim, kv_cnt, sr_pl_rassr, dol_ipoteka, dol_rassr, dol_full_pl, vsnos_rassr, m_start_pr, yr_start_pr):
         cursor = self.cnxn.cursor()
-        zapros = "UPDATE object_str SET prod_pl = " + str(prod_pl) + ", stoim = " + str(stoim) + ", kv_cnt = " + str(kv_cnt) + ", sr_pl_rassr = " + str(sr_pl_rassr) + ", dol_ipoteka = " + str(dol_ipoteka) + ", dol_rassr = " + str(dol_rassr) + ", dol_full_pl = " + str(dol_full_pl) + ", vsnos_rassr = " + str(vsnos_rassr) + " WHERE ID = " + str(id_) + ";"
+        zapros = "UPDATE object_str SET prod_pl = " + str(prod_pl) + ", stoim = " + str(stoim) + ", kv_cnt = " + str(kv_cnt) + ", sr_pl_rassr = " + str(sr_pl_rassr) + ", dol_ipoteka = " + str(dol_ipoteka) + ", dol_rassr = " + str(dol_rassr) + ", dol_full_pl = " + str(dol_full_pl) + ", vsnos_rassr = " + str(vsnos_rassr) + ", m_start_pr = '" + m_start_pr + "', yr_start_pr = " + yr_start_pr + " WHERE ID = " + str(id_) + ";"
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
@@ -278,13 +278,20 @@ class Sql:
             datas.append(el)
         return datas
     
-    def input_gpr_obj(self, id_st_obj, zavisim, prod):
+    def input_gpr_obj(self, id_st_obj, zavisim, prod, ind):
         cursor = self.cnxn.cursor()
         id_ = sql.create_id("GPR_obj")
-        zapros = "INSERT INTO GPR_obj (ID, Id_st_obj, zavisim, prod) VALUES (" + str(id_) + ", " + str(id_st_obj) + ", '" + zavisim + "', " + str(prod) + ");"
+        zapros = "INSERT INTO GPR_obj (ID, Id_st_obj, zavisim, prod, ind) VALUES (" + str(id_) + ", " + str(id_st_obj) + ", '" + zavisim + "', " + str(prod) + ", " + str(ind) + ");"
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
+
+    def take_id_project(self, id_c, nazv):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID FROM project WHERE Id_c = " + str(id_c) + "AND nazv = '" + nazv + "';"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        return data[0][0]
 
 def make_arr_list(arr):
     arr2 = []
