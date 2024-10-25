@@ -27,7 +27,7 @@ class App(CTk.CTk):
         self.p_lab = CTk.CTkLabel(master=self, text="Пароль")
         self.p_lab.grid(row=5, column=1, padx=(0,0))
         self.passw = CTk.CTkEntry(master=self, show="*")
-        self.passw.grid(row=6,column=1)
+        self.passw.grid(row=6, column=1)
 
         self.auth = CTk.CTkButton(master=self, text="Авторизация", command=self.open_authoris)
         self.auth.grid(row=7, column=1, pady=(20, 20))
