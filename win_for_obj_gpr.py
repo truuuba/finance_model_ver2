@@ -1,11 +1,11 @@
 from win_choice_table import *
 
 class GPR_obj(CTk.CTkScrollableFrame):
-    def __init__(self, master, objects, prod, zav):
+    def __init__(self, master, objects, prod, zav, indexes, st_objects):
         super().__init__(master, width=1100, height=500)
         cnt = 0
         for el in objects:
-            print(el.nazv)
+            ind = 1
             self.ttle_obj = CTk.CTkLabel(master=self, text=("Объект: " + el.nazv), bg_color="#E63946")
             self.ttle_obj.grid(row=cnt, column=1, padx=(5,5), pady=(15,15))
             cnt += 1
@@ -20,10 +20,12 @@ class GPR_obj(CTk.CTkScrollableFrame):
             n = len(params_r)
             entry_prod = []
             entry_zavis = []
+            inds = []
             for i in range(n):
                 data_st = sql.take_st_3(params_r[i].id_o)
-                self.work = CTk.CTkLabel(master=self, text=(data_st.code + " " + data_st.nazv))
+                self.work = CTk.CTkLabel(master=self, text=(str(ind) + ". " + data_st.nazv))
                 self.work.grid(row=cnt, column=0, padx=(5,5), pady=(3,3))
+                inds.append(ind)
                 self.prodolj = Spinbox(self)
                 self.prodolj.grid(row=cnt, column=1, padx=(5,5), pady=(3,3))
                 entry_prod.append(self.prodolj)
@@ -31,8 +33,11 @@ class GPR_obj(CTk.CTkScrollableFrame):
                 self.zavis.grid(row=cnt, column=2, padx=(5,5), pady=(3,3))
                 cnt += 1
                 entry_zavis.append(self.zavis)
+                ind += 1
             prod.append(entry_prod)
             zav.append(entry_zavis)
+            indexes.append(inds)
+            st_objects.append(params_r)
 
 class win_for_obj_gpr(CTk.CTk):
     def __init__(self, id_p):
@@ -45,10 +50,12 @@ class win_for_obj_gpr(CTk.CTk):
         self.objects = sql.take_obj_str(id_p=self.id_p)
         self.prod = []
         self.zav = []
+        self.indexes = []
+        self.st_objects = []
 
         self.ttle = CTk.CTkLabel(master=self, text="Введите данные для ГПР по объектам")
         self.ttle.grid(row=0, column=0, padx=(5,5), pady=(5,5))
-        self.win_gpr = GPR_obj(self, self.objects, self.prod, self.zav)
+        self.win_gpr = GPR_obj(self, self.objects, self.prod, self.zav, self.indexes, self.st_objects)
         self.win_gpr.grid(row=1, column=0, padx=(5,5), pady=(5,5))
 
         self.but_next = CTk.CTkButton(master=self, text="Данные введены", command=self.next_win)
@@ -88,7 +95,7 @@ class win_for_obj_gpr(CTk.CTk):
         if prov:
             for i in range(len(self.objects)):
                 for j in range(len(arr_zav[i])):
-                    sql.input_gpr_obj(id_st_obj=self.objects[i].id_, zavisim=arr_zav[i][j], prod=arr_prod[i][j])
+                    sql.input_gpr_obj(id_st_obj=self.st_objects[i][j].id_, zavisim=arr_zav[i][j], prod=arr_prod[i][j], ind=self.indexes[i][j])
             self.withdraw()
             a = choice_table(self.id_p)
             a.mainloop()
@@ -99,5 +106,4 @@ class win_for_obj_gpr(CTk.CTk):
         self.destroy()
         os.system('main.py')
         sys.exit(0)
-
 
