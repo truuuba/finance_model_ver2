@@ -1,7 +1,7 @@
 from win_for_posl import *
 
 class For_PPO(CTk.CTkScrollableFrame):
-    def __init__(self, master, objects_, prod_pl, price, kvartiri, sr_pl_r, d_ipoteka, d_rassr, d_full_pl, vs_rassr):
+    def __init__(self, master, objects_, prod_pl, price, kvartiri, sr_pl_r, d_ipoteka, d_rassr, d_full_pl, vs_rassr, year, mnt):
         super().__init__(master, width=1100, height=500)
         #Данные по каждому объекту
         cnt = 0
@@ -9,6 +9,20 @@ class For_PPO(CTk.CTkScrollableFrame):
             self.ttle_obj = CTk.CTkLabel(master=self, text=el.nazv, bg_color="#E63946")
             self.ttle_obj.grid(row=cnt, column=0, padx=(5,5), pady=(10,10))
             cnt += 1
+            self.ttle_mnt = CTk.CTkLabel(master=self, text="Месяц старта продаж")
+            self.ttle_mnt.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
+            cnt += 1
+            self.mnt_pr = CTk.CTkComboBox(master=self, values=["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"])
+            self.mnt_pr.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
+            cnt += 1
+            mnt.append(self.mnt_pr)
+            self.ttle_yr = CTk.CTkLabel(master=self, text="Год старта продаж")
+            self.ttle_yr.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
+            cnt += 1
+            self.yr_pr = CTk.CTkEntry(master=self)
+            self.yr_pr.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
+            cnt += 1
+            year.append(self.yr_pr)
             self.prod_pl = CTk.CTkLabel(master=self, text="Продаваемая площадь, в кв/м")
             self.prod_pl.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
             cnt += 1
@@ -83,6 +97,8 @@ class win_for_obj(CTk.CTk):
         self.d_rassr = []
         self.d_full_pl = []
         self.vs_rassr = []
+        self.year = []
+        self.mnt = []
 
         patt = r".*Корпус.*"
         self.objects_ = []
@@ -95,7 +111,7 @@ class win_for_obj(CTk.CTk):
         self.ttle = CTk.CTkLabel(master=self, text="Введите данные по объектам")
         self.ttle.grid(row=0, column=0, padx=(5,5), pady=(5,5))
 
-        self.win_PPO = For_PPO(self, self.objects_, self.prod_pl, self.price, self.kvartiri, self.sr_pl_r, self.d_ipoteka, self.d_rassr, self.d_full_pl, self.vs_rassr)
+        self.win_PPO = For_PPO(self, self.objects_, self.prod_pl, self.price, self.kvartiri, self.sr_pl_r, self.d_ipoteka, self.d_rassr, self.d_full_pl, self.vs_rassr, self.year, self.mnt)
         self.win_PPO.grid(row=1, column=0, padx=(5,5), pady=(5,5))
 
         self.but_input = CTk.CTkButton(master=self, text="Данные введены", command=self.next_win)
@@ -114,13 +130,14 @@ class win_for_obj(CTk.CTk):
             match_rassr = re.match(patt_kv, self.d_rassr[i].get())
             match_full_pr = re.match(patt_kv, self.d_full_pl[i].get())
             match_vs_rassr = re.match(patt_kv, self.vs_rassr[i].get())
-            if not(match_pr_pl and match_price and match_kv and match_sr_pl and match_ipoteka and match_rassr and match_full_pr and match_vs_rassr):
+            match_year = re.match(patt_kv, self.year[i].get())
+            if not(match_pr_pl and match_price and match_kv and match_sr_pl and match_ipoteka and match_rassr and match_full_pr and match_vs_rassr and match_year):
                 prov = False
                 break
         
         if prov:
             for i in range(len(self.objects_)):
-                sql.input_ppo_in_obj(self.objects_[i].id_, prod_pl=self.prod_pl[i].get(), stoim=self.price[i].get(), kv_cnt=self.kvartiri[i].get(), sr_pl_rassr=self.d_rassr[i].get(), dol_ipoteka=self.d_ipoteka[i].get(), dol_rassr=self.d_rassr[i].get(), dol_full_pl=self.d_full_pl[i].get(), vsnos_rassr=self.vs_rassr[i].get())
+                sql.input_ppo_in_obj(self.objects_[i].id_, prod_pl=self.prod_pl[i].get(), stoim=self.price[i].get(), kv_cnt=self.kvartiri[i].get(), sr_pl_rassr=self.d_rassr[i].get(), dol_ipoteka=self.d_ipoteka[i].get(), dol_rassr=self.d_rassr[i].get(), dol_full_pl=self.d_full_pl[i].get(), vsnos_rassr=self.vs_rassr[i].get(), m_start_pr=self.mnt[i].get(), yr_start_pr=self.year[i].get())
             self.withdraw()
             a = win_for_posl(id_p=self.id_p)
             a.mainloop()
