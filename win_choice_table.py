@@ -5,6 +5,7 @@ from spinbox import Spinbox
 from connect_db import sql
 import re
 from tkinter import messagebox as mb
+from make_gpr import *
 
 CTk.set_appearance_mode("dark")
 CTk.set_default_color_theme("green")
