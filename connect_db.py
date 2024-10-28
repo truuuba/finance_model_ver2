@@ -27,6 +27,20 @@ class stati:
         self.id_ = id_
         self.id_o = id_o
 
+class stati_t:
+    def __init__(self, id_, id_st_3, zav, prod, ind):
+        self.id_ = id_
+        self.id_st_3 = id_st_3
+        self.zav = zav
+        self.prod = prod
+        self.ind = ind
+
+class obj_str_gpr:
+    def __init__(self, id_, nazv, posl):
+        self.id_ = id_
+        self.nazv = nazv
+        self.posl = posl
+
 class Sql:
     def __init__(self, database="FM_model", server=r"NODE2\DBLMSSQLSRV", username="connect_FM_model", password=r"9*%dA6lU&T6)p2PX", driver="ODBC Driver 17 for SQL Server"):
         connectionString = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
@@ -247,8 +261,7 @@ class Sql:
     
     def input_gpr_obsh(self, id_st_obsh, zavisim, prod, ind):
         cursor = self.cnxn.cursor()
-        id_ = sql.create_id("GPR_obsh")
-        zapros = "INSERT INTO GPR_obsh (ID, Id_st_obsh, zavisim, prod, ind) VALUES (" + str(id_) + ", " + str(id_st_obsh) + ", '" + zavisim + "', " + str(prod) + ", " + str(ind) + ");"
+        zapros = "UPDATE obsh_stati SET zavisim = '" + zavisim + "', prod = " + str(prod) + ", ind = " + str(ind) + " WHERE ID = " + str(id_st_obsh) + ";"
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
@@ -280,8 +293,7 @@ class Sql:
     
     def input_gpr_obj(self, id_st_obj, zavisim, prod, ind):
         cursor = self.cnxn.cursor()
-        id_ = sql.create_id("GPR_obj")
-        zapros = "INSERT INTO GPR_obj (ID, Id_st_obj, zavisim, prod, ind) VALUES (" + str(id_) + ", " + str(id_st_obj) + ", '" + zavisim + "', " + str(prod) + ", " + str(ind) + ");"
+        zapros = "UPDATE obj_stati SET zavisim = '" + str(zavisim) + "', prod = " + str(prod) + ", ind = " + str(ind) + " WHERE ID = " + str(id_st_obj) + ";"
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
@@ -292,6 +304,54 @@ class Sql:
         cursor.execute(zapros)
         data = cursor.fetchall()
         return data[0][0]
+    
+    def obsh_stati_for_t(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, Id_st_3, zavisim, prod, ind FROM obsh_stati WHERE Id_p = " + str(id_p) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stati_t(data[i][0], data[i][1], data[i][2], data[i][3], data[i][4])
+            datas.append(el)
+        for el in datas:
+            el.zav = del_probel(el.zav)
+        return datas
+    
+    def take_mnt_start(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT mnt_str FROM project WHERE ID = " + str(id_p) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        res = del_probel(data[0][0])
+        return res
+        
+    def take_yr_start(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT yr_str FROM project WHERE ID = " + str(id_p) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        return data[0][0]
+    
+    def take_name_pr(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT name FROM project WHERE ID = " + str(id_p) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        return del_probel(data[0][0])
+    
+    def obj_str_gpr(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, nazv, posl_str FROM object_str WHERE Id_p = " + str(id_p) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = obj_str_gpr(data[i][0], data[i][1], data[i][2])
+            datas.append(el)
+        for el in datas:
+            el.nazv = del_probel(el.nazv)
+        return datas
 
 def make_arr_list(arr):
     arr2 = []
@@ -307,5 +367,7 @@ def del_probel(nm):
             nm = nm[:-1]
         else:
             return nm
+        
+sql = Sql()
         
 sql = Sql()
