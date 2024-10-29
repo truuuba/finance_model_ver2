@@ -304,3 +304,4 @@ def insertion_sort(unsorted, nazv, zav, prod, ind, ish):
         prod[hole] = val_pr
         ind[hole] = val_ind
         ish[hole] = val_ish
+
