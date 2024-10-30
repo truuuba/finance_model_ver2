@@ -9,23 +9,19 @@ class data_gpo:
         self.gpo = gpo
         self.dlit = dlit
 
-'''
-Узнать потом можно ли перетащить инициализацию внутрь 
-и не использовать глобально
-'''
-#Заготовка меняемой таблицы
-gpo = []
-critical = []
-dlitel = 0
-datas = data_gpo(gpo=gpo, critic=critical, dlit=dlitel)
+def create_tabel_gpr(id_pr, prov_create):
+    #Заготовка меняемой таблицы
+    gpo = []
+    critical = []
+    dlitel = 0
+    datas_obsh = data_gpo(gpo=gpo, critic=critical, dlit=dlitel)    
 
-def create_tabel_gpr(id_pr, prov_create):    
     #Вытаскиваем сначала общие статьи и начало:
     obsh_st = sql.obsh_stati_for_t(id_p=id_pr)
     mnt_start = sql.take_mnt_start(id_p=id_pr)
     yr_start = sql.take_yr_start(id_p=id_pr)
     #Вытаскиваем данные по объектам
-    obj_str = sql.take_obj_str(id_p=id_pr)
+    obj_str = sql.obj_str_gpr(id_p=id_pr)
 
     n_t = sql.take_name_pr(id_pr)
     name_table = translit(n_t, language_code='ru', reversed=True) 
@@ -34,26 +30,161 @@ def create_tabel_gpr(id_pr, prov_create):
     name_rash = []
     zavisim = []
     prod = []
+    numbers = []
     for el in obsh_st:
         data_st = sql.take_st_3(el.id_st_3)
         name_rash.append(data_st.nazv)
         zavisim.append(el.zav)
         prod.append(el.prod)
+        numbers.append(el.ind)
     
-    #Подсчет таблицы ГПР
-    count_gpo(datas, name_rash, zavisim, prod)
+    #Подсчет таблицы ГПР по ОБЩИМ данным
+    count_gpo(datas_obsh, name_rash, zavisim, prod, numbers)
+    ttle_obsh = 'Общие статьи по проекту'
+    # Проходимся по объектам строительства и сортируем по порядку строительства
+    cnt = 0
+    object_str = []
+    max_cnt = 0 #последний этап
+    while len(object_str) < len(obj_str):
+        for el in obj_str:
+            if cnt == el.posl:
+                object_str.append(el)
+                max_cnt = cnt
+        cnt += 1
+    
+    #Начинаем сбор данных по ГПР каждого из объектов
+    all_obj = []
+    ttles = []
+    for el in object_str:
+        data_obj = sql.stati_obj_str(id_obj=el.id_)
+        ttle = el.nazv
+        name_rash_ = []
+        zavisim_ = []
+        prod_ = []
+        numbers_ = []
+        gpo_ = []
+        critical_ = []
+        dlitel_ = 0
+        datas_k = data_gpo(gpo=gpo_, critic=critical_, dlit=dlitel_)
+        for el2 in data_obj:
+            st3_obj = sql.take_st_3(el2.id_st_3)
+            name_rash_.append(st3_obj.code + " " + st3_obj.nazv)
+            zavisim_.append(el2.zav)
+            prod_.append(el2.prod)
+            numbers_.append(el2.ind)
+        count_gpo(datas_k, name_rash_, zavisim_, prod_, numbers_)
+        #Добавляем продолжительность в БД
+        sql.input_prod_obj_str(id_=el.id_, prod=datas_k.dlit)
+        all_obj.append(datas_k)
+        ttles.append(ttle)
+    
+    # Пора создавать туть общую таблицу
+    # Поиск продолжительности по объектам
+    obsh_dlit = []
+    for i in range(max_cnt):
+        arr_dl = []
+        for j in range(len(all_obj)):
+            if object_str[j].posl == i+1:
+                arr_dl.append(all_obj[j].dlit)
+        obsh_dlit.append(max(arr_dl))
 
+    # Доделываем первую таблицу
+    full_gpr = [""] * (datas_obsh.dlit + sum(obsh_dlit) + 1)
+    full_gpr[0] = ttle_obsh
+    full_gpo = []
+    full_gpo.append(full_gpr)
+    # цикл по общему ГПР
+    for i in range(len(datas_obsh.gpo)):
+        # цикл по длительности корпусов
+        for j in range(sum(obsh_dlit)):
+            datas_obsh.gpo[i].append(0)
+        full_gpo.append(datas_obsh.gpo[i])
 
-def count_gpo(data_gpr, name_rash, zavisim, prod):
-    print(name_rash)
-    print(zavisim)
-    print(prod)
+    #Пошли по объектам
+    cnt = datas_obsh.dlit # Время от начала старта проекта
+    #Цикл по этапу
+    for i in range(max_cnt):
+        #Цикл по объектам
+        for j in range(len(all_obj)):
+            #Проверка этапа для объекта ГПР
+            if i+1 == object_str[j].posl:
+                #Названия по объектам строительства
+                full_gpr = [""] * (datas_obsh.dlit + sum(obsh_dlit) + 1)
+                full_gpr[0] = ttle_obsh
+                full_gpo = []
+                full_gpo.append(full_gpr)
+                #Проходимся по статьям объекта
+                for l in range(len(all_obj[j].gpo)):
+                    arr = []
+                    arr.append(all_obj[j].gpo[l][0])
+                    #Дописываем нули перед стартом работ
+                    for k in range(cnt):
+                        arr.append(0)
+                    #Записываем ГПР объекта
+                    for k in range(1, len(all_obj[j].gpo[l])):
+                        arr.append(all_obj[j].gpo[l][k])
+                    #Дописываем нули после работ
+                    n = len(arr)
+                    for k in range(n, datas_obsh.dlit + sum(obsh_dlit) + 1):
+                        arr.append(0)
+                    full_gpo.append(arr)
+        cnt += obsh_dlit[i]
+    
+    #Добавим продолжительность проекта в БД
+    sql.input_prod_pr(id_=id_pr, prod=(datas_obsh.dlit + sum(obsh_dlit)))
 
-    numbers = []
-    #Подготовка всех переменнных
+    #Создание таблицы ГПР
+    if prov_create:
+        filepath = create_empty_excel(columns=make_first_list(mnt_start, datas_obsh.dlit + sum(obsh_dlit), yr_start),
+                                  filename=('gpr_' + name_table + '.xlsx'), datas=full_gpo)
+
+#Добавляем функцию для поиска месяцев и годов
+def make_first_list(mnth, cnt, yr):
+    lst = ['Параметры расходов']
+    counter = 0
+    ind = 0
+    mounthes = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
+    for i in range(len(mounthes)):
+        if mounthes[i] == mnth:
+            ind = i
+    while (counter < cnt):
+        lst.append(mounthes[ind] + ' ' + str(yr))
+        if ind == 11:
+            ind = 0
+            yr += 1
+        else:
+            ind += 1
+        counter += 1     
+    return lst
+
+# Функция для определения цвета ячейки
+def get_cell_color(val):
+    if val == 1:
+        return '#CCC5B9'  # Цвет для значения 1
+    return '#FFFCF2'      # Цвет по умолчанию
+        
+# Создаем файлик для вноса данных 
+def create_empty_excel(datas, columns: list, filename: str, sheet_name: str = 'Таблица ГПР'):
+    df = pd.DataFrame(columns=columns, data=datas)
+
+    if not os.path.exists('excel_files'):
+        os.makedirs('excel_files')
+
+    filepath = os.path.join('excel_files', filename)
+    excel_writer = pd.ExcelWriter(filepath, engine='xlsxwriter')
+
+    # Применяем стили к ячейкам с использованием `Styler.apply`
+    df_styled = df.style.apply(lambda x: [f'background-color: {get_cell_color(val)}' for val in x], axis=1)
+
+    # Сохраняем DataFrame в Excel с применением стиля
+    df_styled.to_excel(excel_writer, index=False, sheet_name=sheet_name, freeze_panes=(1, 0))
+    excel_writer._save()
+
+    return filepath
+
+def count_gpo(data_gpr, name_rash, zavisim, prod, numbers):
     dl = len(name_rash)
-    for i in range(dl):
-        numbers.append(i+1)
+
     ish_isha = []
     rasch_nazv = []
     rasch_zav = []
@@ -65,7 +196,7 @@ def count_gpo(data_gpr, name_rash, zavisim, prod):
     indexes = []
     for j in range(dl):
         if zavisim[j] == "0":
-            #Двигаем данные в новые массивы данные
+            # Двигаем данные в новые массивы данные
             rasch_zav.append(zavisim[j])
             rasch_nazv.append(name_rash[j])
             rasch_prod.append(prod[j])
@@ -74,7 +205,7 @@ def count_gpo(data_gpr, name_rash, zavisim, prod):
             ish_isha.append(0)
             indexes.append(j)
 
-    #Удаляем данные из оригинального массива
+    # Удаляем данные из оригинального массива
     for i in range(len(indexes)):
         name_rash.pop(indexes[i])
         zavisim.pop(indexes[i])
@@ -85,7 +216,6 @@ def count_gpo(data_gpr, name_rash, zavisim, prod):
     indexes.clear()
 
     # Делаем прямую проходку для поиска продолжительности процесов
-
     while len(rasch_nazv) < dl:
         indexes = []
         for i in range(len(name_rash)):
@@ -153,7 +283,6 @@ def count_gpo(data_gpr, name_rash, zavisim, prod):
     dlina.append(dlina[-1])
 
     #Начинаем обратный проход
-
     dl_obr = []
     nazv_obr = []
     zav_obr = []
@@ -161,7 +290,6 @@ def count_gpo(data_gpr, name_rash, zavisim, prod):
     numb_obr = []
     ish_isha_obr = []
     dlina_obr = []
-
     provereno = []
     for i in range(dl+1):
         provereno.append(False)
@@ -210,7 +338,7 @@ def count_gpo(data_gpr, name_rash, zavisim, prod):
                                     min_zn = step
                             dl_obr.append(min_zn)
                             
-                            #Ищем индекс текущего пиздеца
+                            # Ищем индекс текущего пиздеца
                             index = 0
                             for i in range(len(rasch_nazv)):
                                 if numb[i] == int(el):
@@ -267,7 +395,6 @@ def count_gpo(data_gpr, name_rash, zavisim, prod):
         for j in range(1, data_gpr.dlit+1):
             if ((dlina_obr[i] - int(prod_obr[i]) + 1) <= j) and (dlina_obr[i] >= j):
                 data_gpr.gpo[i][j] = 1
-        print(data_gpr.gpo[i])
 
 def insertion_sort(unsorted, nazv, zav, prod, ind, ish):
     """ сортировка вставками """
