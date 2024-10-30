@@ -352,6 +352,33 @@ class Sql:
         for el in datas:
             el.nazv = del_probel(el.nazv)
         return datas
+    
+    def stati_obj_str(self, id_obj):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, Id_st_3, zavisim, prod, ind FROM obj_stati WHERE Id_obj = " + str(id_obj) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stati_t(data[i][0], data[i][1], data[i][2], data[i][3], data[i][4])
+            datas.append(el)
+        for el in datas:
+            el.zav = del_probel(el.zav)
+        return datas
+    
+    def input_prod_obj_str(self, id_, prod):
+        cursor = self.cnxn.cursor()
+        zapros = "UPDATE object_str SET prodolj = " + str(prod) + "WHERE ID = " + str(id_) + ";"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+    
+    def input_prod_pr(self, id_, prod):
+        cursor = self.cnxn.cursor()
+        zapros = "UPDATE project SET prod = " + str(prod) + "WHERE ID = " + str(id_) + ";"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
 
 def make_arr_list(arr):
     arr2 = []
@@ -369,5 +396,4 @@ def del_probel(nm):
             return nm
         
 sql = Sql()
-        
-sql = Sql()
+
