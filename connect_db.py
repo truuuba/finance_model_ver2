@@ -335,7 +335,7 @@ class Sql:
     
     def take_name_pr(self, id_p):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT name FROM project WHERE ID = " + str(id_p) + ";"
+        zapros = "SELECT nazv FROM project WHERE ID = " + str(id_p) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
         return del_probel(data[0][0])
@@ -394,6 +394,6 @@ def del_probel(nm):
             nm = nm[:-1]
         else:
             return nm
+    return nm
         
 sql = Sql()
-
