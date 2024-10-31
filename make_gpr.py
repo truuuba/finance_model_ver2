@@ -33,11 +33,11 @@ def create_tabel_gpr(id_pr, prov_create):
     numbers = []
     for el in obsh_st:
         data_st = sql.take_st_3(el.id_st_3)
-        name_rash.append(data_st.nazv)
+        name_rash.append(data_st.code + " " + data_st.nazv)
         zavisim.append(el.zav)
         prod.append(el.prod)
         numbers.append(el.ind)
-    
+
     #Подсчет таблицы ГПР по ОБЩИМ данным
     count_gpo(datas_obsh, name_rash, zavisim, prod, numbers)
     ttle_obsh = 'Общие статьи по проекту'
@@ -110,8 +110,7 @@ def create_tabel_gpr(id_pr, prov_create):
             if i+1 == object_str[j].posl:
                 #Названия по объектам строительства
                 full_gpr = [""] * (datas_obsh.dlit + sum(obsh_dlit) + 1)
-                full_gpr[0] = ttle_obsh
-                full_gpo = []
+                full_gpr[0] = ttles[j]
                 full_gpo.append(full_gpr)
                 #Проходимся по статьям объекта
                 for l in range(len(all_obj[j].gpo)):
@@ -129,9 +128,16 @@ def create_tabel_gpr(id_pr, prov_create):
                         arr.append(0)
                     full_gpo.append(arr)
         cnt += obsh_dlit[i]
-    
+       
     #Добавим продолжительность проекта в БД
     sql.input_prod_pr(id_=id_pr, prod=(datas_obsh.dlit + sum(obsh_dlit)))
+
+    for i in range(len(full_gpo)):
+        for j in range(1, len(full_gpo[i])):
+            if full_gpo[i][j] == 0:
+                full_gpo[i][j] = ""
+            if full_gpo[i][j] == 1:
+                full_gpo[i][j] = " "
 
     #Создание таблицы ГПР
     if prov_create:
@@ -140,7 +146,7 @@ def create_tabel_gpr(id_pr, prov_create):
 
 #Добавляем функцию для поиска месяцев и годов
 def make_first_list(mnth, cnt, yr):
-    lst = ['Параметры расходов']
+    lst = ['Параметры работ']
     counter = 0
     ind = 0
     mounthes = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
@@ -159,11 +165,21 @@ def make_first_list(mnth, cnt, yr):
 
 # Функция для определения цвета ячейки
 def get_cell_color(val):
-    if val == 1:
-        return '#CCC5B9'  # Цвет для значения 1
-    return '#FFFCF2'      # Цвет по умолчанию
-        
-# Создаем файлик для вноса данных 
+    # Основной цвет по умолчанию
+    color = '#FFFCF2'
+    if val == " ":
+        color = '#0077B6'
+    return color
+
+# Функция для выделения строки, если в первом столбце текст не начинается с цифры
+def highlight_row(row):
+    # Используем iloc для доступа к первому элементу строки по позиции
+    if not str(row.iloc[0]).strip()[0].isdigit():  # Проверка, если первый символ не цифра
+        return ['background-color: #FFD700'] * len(row)  # Желтый фон для всей строки
+    else:
+        return [f'background-color: {get_cell_color(val)}' for val in row]  # Стандартные цвета
+
+# Создаем файл для внесения данных 
 def create_empty_excel(datas, columns: list, filename: str, sheet_name: str = 'Таблица ГПР'):
     df = pd.DataFrame(columns=columns, data=datas)
 
@@ -172,12 +188,30 @@ def create_empty_excel(datas, columns: list, filename: str, sheet_name: str = '�
 
     filepath = os.path.join('excel_files', filename)
     excel_writer = pd.ExcelWriter(filepath, engine='xlsxwriter')
-
-    # Применяем стили к ячейкам с использованием `Styler.apply`
-    df_styled = df.style.apply(lambda x: [f'background-color: {get_cell_color(val)}' for val in x], axis=1)
+    
+    # Применяем стили к строкам
+    df_styled = df.style.apply(highlight_row, axis=1)
 
     # Сохраняем DataFrame в Excel с применением стиля
     df_styled.to_excel(excel_writer, index=False, sheet_name=sheet_name, freeze_panes=(1, 0))
+
+    # Получаем доступ к объекту worksheet для добавления сетки и настройки ширины столбцов
+    workbook = excel_writer.book
+    worksheet = excel_writer.sheets[sheet_name]
+    
+    # Автоматическая настройка ширины столбцов
+    worksheet = excel_writer.sheets[sheet_name]
+    for idx, col in enumerate(df.columns):
+        max_length = max(df[col].astype(str).map(len).max(), len(col)) + 2  # Учитываем заголовок и добавляем отступ
+        worksheet.set_column(idx, idx, max_length)
+
+    # Определяем стиль для границ (сетки)
+    border_format = workbook.add_format({'border': 1, 'border_color': '#000000'})  # Черная граница
+
+    # Применяем границы ко всем ячейкам с данными
+    worksheet.conditional_format(0, 0, len(df), len(df.columns) - 1, {'type': 'no_blanks', 'format': border_format})
+    worksheet.conditional_format(0, 0, len(df), len(df.columns) - 1, {'type': 'blanks', 'format': border_format})
+
     excel_writer._save()
 
     return filepath
@@ -431,4 +465,3 @@ def insertion_sort(unsorted, nazv, zav, prod, ind, ish):
         prod[hole] = val_pr
         ind[hole] = val_ind
         ish[hole] = val_ish
-
