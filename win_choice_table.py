@@ -2,7 +2,6 @@ import customtkinter as CTk
 import os
 import sys
 from spinbox import Spinbox
-from connect_db import sql
 import re
 from tkinter import messagebox as mb
 from make_gpr import *
@@ -22,7 +21,7 @@ class choice_table(CTk.CTk):
         #ГПР
         self.gpr = CTk.CTkLabel(master=self, text="Таблица графика производственных работ")
         self.gpr.grid(row=0, column=0, padx=(5,5), pady=(5,5))
-        self.gpr_ex = CTk.CTkButton(master=self, text="Создать таблицу ГПР в Excel")
+        self.gpr_ex = CTk.CTkButton(master=self, text="Создать таблицу ГПР в Excel", command=self.but_make_gpr)
         self.gpr_ex.grid(row=1, column=0, padx=(5,5), pady=(5,5))
 
         #ППО
@@ -70,3 +69,12 @@ class choice_table(CTk.CTk):
         self.destroy()
         os.system('main.py')
         sys.exit(0)
+
+    def but_make_gpr(self):
+        try:
+            create_tabel_gpr(id_pr=self.id_p, prov_create=True)
+            mb.showinfo('Успешно!', 'Таблица ГПР была успешно создана')
+        except SyntaxError:
+            mb.showerror('Ошибка!', 'Были записаны неверные данные в ГПР')
+
+
