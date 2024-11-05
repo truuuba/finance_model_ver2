@@ -1,10 +1,9 @@
 import customtkinter as CTk
-import os
 import sys
 from spinbox import Spinbox
-import re
 from tkinter import messagebox as mb
 from make_gpr import *
+from make_ppo import *
 
 CTk.set_appearance_mode("dark")
 CTk.set_default_color_theme("green")
@@ -17,6 +16,7 @@ class choice_table(CTk.CTk):
         self.resizable(True, True)
         self.protocol('WM_DELETE_WINDOW', self._done)
         self.id_p = id_p
+        create_tabel_gpr(id_pr=self.id_p, prov_create=False)
 
         #ГПР
         self.gpr = CTk.CTkLabel(master=self, text="Таблица графика производственных работ")
@@ -27,7 +27,7 @@ class choice_table(CTk.CTk):
         #ППО
         self.ppo = CTk.CTkLabel(master=self, text="Таблица ППО")
         self.ppo.grid(row=2, column=0, padx=(5,5), pady=(5,5))
-        self.ppo_ex = CTk.CTkButton(master=self, text="Создать таблицу ППО в Excel")
+        self.ppo_ex = CTk.CTkButton(master=self, text="Создать таблицу ППО в Excel", command=self.but_make_ppo)
         self.ppo_ex.grid(row=3, column=0, padx=(5,5), pady=(5,5))
 
         #БДР
@@ -76,5 +76,10 @@ class choice_table(CTk.CTk):
             mb.showinfo('Успешно!', 'Таблица ГПР была успешно создана')
         except SyntaxError:
             mb.showerror('Ошибка!', 'Были записаны неверные данные в ГПР')
+
+    def but_make_ppo(self):
+        create_tabel_ppo(id_pr=self.id_p, prov_create=True)
+        mb.showinfo('Успешно!', 'Таблица ППО была успешно создана')
+
 
 
