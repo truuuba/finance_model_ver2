@@ -1,6 +1,6 @@
 from win_for_posl import *
 
-class For_PPO(CTk.CTkScrollableFrame):
+class For_PPO_k(CTk.CTkScrollableFrame):
     def __init__(self, master, objects_, prod_pl, price, kvartiri, sr_pl_r, d_ipoteka, d_rassr, d_full_pl, vs_rassr, year, mnt):
         super().__init__(master, width=1100, height=500)
         #Данные по каждому объекту
@@ -101,27 +101,27 @@ class win_for_obj(CTk.CTk):
         self.mnt = []
 
         patt = r".*Корпус.*"
-        self.objects_ = []
+        self.objects_k = []
         #Проверка на тип объекта
         for el in list_obj:
             match_obj = re.match(patt, el.nazv)
             if match_obj:
-                self.objects_.append(el)
+                self.objects_k.append(el)
 
         self.ttle = CTk.CTkLabel(master=self, text="Введите данные по объектам")
-        self.ttle.grid(row=0, column=0, padx=(5,5), pady=(5,5))
+        self.ttle.grid(row=0, column=1, padx=(5,5), pady=(5,5))
 
-        self.win_PPO = For_PPO(self, self.objects_, self.prod_pl, self.price, self.kvartiri, self.sr_pl_r, self.d_ipoteka, self.d_rassr, self.d_full_pl, self.vs_rassr, self.year, self.mnt)
+        self.win_PPO = For_PPO_k(self, self.objects_k, self.prod_pl, self.price, self.kvartiri, self.sr_pl_r, self.d_ipoteka, self.d_rassr, self.d_full_pl, self.vs_rassr, self.year, self.mnt)
         self.win_PPO.grid(row=1, column=0, padx=(5,5), pady=(5,5))
 
         self.but_input = CTk.CTkButton(master=self, text="Данные введены", command=self.next_win)
-        self.but_input.grid(row=2, column=0, padx=(5,5), pady=(5,5))
+        self.but_input.grid(row=2, column=1, padx=(5,5), pady=(5,5))
 
     def next_win(self):
         prov = True
         patt_pr_pl_price = r"^\d+(\.\d+)?$"
         patt_kv = r"^[0-9]+$"
-        for i in range(len(self.objects_)):
+        for i in range(len(self.objects_k)):
             match_pr_pl = re.match(patt_pr_pl_price, self.prod_pl[i].get())
             match_price = re.match(patt_pr_pl_price, self.price[i].get())
             match_kv = re.match(patt_kv, self.kvartiri[i].get())
@@ -134,10 +134,10 @@ class win_for_obj(CTk.CTk):
             if not(match_pr_pl and match_price and match_kv and match_sr_pl and match_ipoteka and match_rassr and match_full_pr and match_vs_rassr and match_year):
                 prov = False
                 break
-        
+
         if prov:
-            for i in range(len(self.objects_)):
-                sql.input_ppo_in_obj(self.objects_[i].id_, prod_pl=self.prod_pl[i].get(), stoim=self.price[i].get(), kv_cnt=self.kvartiri[i].get(), sr_pl_rassr=self.d_rassr[i].get(), dol_ipoteka=self.d_ipoteka[i].get(), dol_rassr=self.d_rassr[i].get(), dol_full_pl=self.d_full_pl[i].get(), vsnos_rassr=self.vs_rassr[i].get(), m_start_pr=self.mnt[i].get(), yr_start_pr=self.year[i].get())
+            for i in range(len(self.objects_k)):
+                sql.input_ppo_in_obj(self.objects_k[i].id_, prod_pl=self.prod_pl[i].get(), stoim=self.price[i].get(), kv_cnt=self.kvartiri[i].get(), sr_pl_rassr=self.d_rassr[i].get(), dol_ipoteka=self.d_ipoteka[i].get(), dol_rassr=self.d_rassr[i].get(), dol_full_pl=self.d_full_pl[i].get(), vsnos_rassr=self.vs_rassr[i].get(), m_start_pr=self.mnt[i].get(), yr_start_pr=self.year[i].get())
             self.withdraw()
             a = win_for_posl(id_p=self.id_p)
             a.mainloop()
