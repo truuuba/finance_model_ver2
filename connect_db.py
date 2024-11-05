@@ -41,6 +41,22 @@ class obj_str_gpr:
         self.nazv = nazv
         self.posl = posl
 
+class obj_str_ppo:
+    def __init__(self, id_, nazv, prod, prod_pl, stoim, kv_cnt, sr_pl_rassr, d_ip, d_rassr, d_full, vsnos_r, m_st, yr_st):
+        self.id_ = id_
+        self.nazv = nazv
+        self.prod = prod
+        self.prod_pl = prod_pl
+        self.stoim = stoim
+        self.kv_cnt = kv_cnt
+        self.sr_pl_rassr = sr_pl_rassr
+        self.d_ip = d_ip
+        self.d_rassr = d_rassr
+        self.d_full = d_full
+        self.vsnos_r = vsnos_r
+        self.m_st = m_st
+        self.yr_st = yr_st
+
 class Sql:
     def __init__(self, database="FM_model", server=r"NODE2\DBLMSSQLSRV", username="connect_FM_model", password=r"9*%dA6lU&T6)p2PX", driver="ODBC Driver 17 for SQL Server"):
         connectionString = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
@@ -379,6 +395,22 @@ class Sql:
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
+
+    def take_obj_for_ppo(self, id_pr):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, nazv, prodolj, prod_pl, stoim, kv_cnt, sr_pl_rassr, dol_ipoteka, dol_rassr, dol_full_pl, vsnos_rassr, m_start_pr, yr_start_pr FROM object_str WHERE Id_p = " + str(id_pr) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = obj_str_ppo(data[i][0], data[i][1], data[i][2], data[i][3], data[i][4], data[i][5], data[i][6], data[i][7], data[i][8], data[i][9], data[i][10], data[i][11], data[i][12])
+            datas.append(el)
+        for el in datas:
+            el.nazv = del_probel(el.nazv)
+            if not(el.m_st == None):
+                el.m_st = del_probel(el.m_st)
+        return datas
+
 
 def make_arr_list(arr):
     arr2 = []
