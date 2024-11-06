@@ -323,7 +323,7 @@ class Sql:
     
     def obsh_stati_for_t(self, id_p):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT ID, Id_st_3, zavisim, prod, ind FROM obsh_stati WHERE Id_p = " + str(id_p) + ";"
+        zapros = "SELECT ID, Id_st_3, zavisim, prod, ind FROM obsh_stati WHERE Id_p = " + str(id_p) + " ORDER BY ind;"
         cursor.execute(zapros)
         data = cursor.fetchall()
         datas = []
@@ -410,7 +410,36 @@ class Sql:
             if not(el.m_st == None):
                 el.m_st = del_probel(el.m_st)
         return datas
+    
+    def input_ppo(self, id_obj, yr, mnt, dohod):
+        cursor = self.cnxn.cursor()
+        id_ = sql.create_id("PPO_obj")
+        zapros = "INSERT INTO PPO_obj (ID, Id_obj, yr, mnt, dohod) VALUES (" + str(id_) + "," + str(id_obj) + "," + str(yr) + ", '" + str(mnt) + "', " + str(dohod) + ");"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+    
+    def prov_PPO(self, id_obj):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM PPO_obj WHERE Id_obj = " + str(id_obj) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        if len(data[0]) != 0:
+            zapros = "DELETE FROM PPO_obj WHERE Id_obj = "  + str(id_obj) + ";"
+            cursor.execute(zapros)
+            self.cnxn.commit()
+            cursor.close()
 
+    def prov_GPR(self, id_st_obsh):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM BDR_obj WHERE ID_st_obsh = " + str(id_st_obsh) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        if len(data[0]) != 0:
+            zapros = "DELETE FROM BDR_obj WHERE ID_st_obsh = "  + str(id_st_obsh) + ";"
+            cursor.execute(zapros)
+            self.cnxn.commit()
+            cursor.close()
 
 def make_arr_list(arr):
     arr2 = []
