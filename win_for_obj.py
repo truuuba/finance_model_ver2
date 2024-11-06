@@ -109,13 +109,13 @@ class win_for_obj(CTk.CTk):
                 self.objects_k.append(el)
 
         self.ttle = CTk.CTkLabel(master=self, text="Введите данные по объектам")
-        self.ttle.grid(row=0, column=1, padx=(5,5), pady=(5,5))
+        self.ttle.grid(row=0, column=0, padx=(5,5), pady=(5,5))
 
         self.win_PPO = For_PPO_k(self, self.objects_k, self.prod_pl, self.price, self.kvartiri, self.sr_pl_r, self.d_ipoteka, self.d_rassr, self.d_full_pl, self.vs_rassr, self.year, self.mnt)
         self.win_PPO.grid(row=1, column=0, padx=(5,5), pady=(5,5))
 
         self.but_input = CTk.CTkButton(master=self, text="Данные введены", command=self.next_win)
-        self.but_input.grid(row=2, column=1, padx=(5,5), pady=(5,5))
+        self.but_input.grid(row=2, column=0, padx=(5,5), pady=(5,5))
 
     def next_win(self):
         prov = True
