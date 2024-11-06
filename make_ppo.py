@@ -29,7 +29,7 @@ def create_tabel_ppo(id_pr, prov_create):
 
     arr_ppo = []
     for i in range(len(obj_str)):
-        arr_ppo.append(cout_ppo(obj_str[i].prod_pl, obj_str[i].stoim, obj_str[i].prod, obj_str[i].m_st, obj_str[i].kv_cnt, obj_str[i].yr_st, obj_str[i].d_ip, obj_str[i].d_rassr, obj_str[i].d_full, obj_str[i].vsnos_r, obj_str[i].sr_pl_rassr))
+        arr_ppo.append(cout_ppo(obj_str[i].prod_pl, obj_str[i].stoim, obj_str[i].prod, obj_str[i].m_st, obj_str[i].kv_cnt, obj_str[i].yr_st, obj_str[i].d_ip, obj_str[i].d_rassr, obj_str[i].d_full, obj_str[i].vsnos_r, obj_str[i].sr_pl_rassr, id_obj=obj_str[i].id_))
         sht_name.append(obj_str[i].nazv)
 
     if prov_create:
@@ -86,7 +86,7 @@ def create_empty_excel(data: list, filename: str, sheet_name):
     return filepath
 
 # Считаем ППО
-def cout_ppo(ploshad, st_m, prod, mounth_start, cnt_kv, year, _pr_ipot, _pr_rassr, _pr_full, _pr_rassr_vznos, sr_plat_rassr):
+def cout_ppo(ploshad, st_m, prod, mounth_start, cnt_kv, year, _pr_ipot, _pr_rassr, _pr_full, _pr_rassr_vznos, sr_plat_rassr, id_obj):
     # Проценты
     pr_ipot = _pr_ipot/100
     pr_rassr = _pr_rassr/100
@@ -264,6 +264,12 @@ def cout_ppo(ploshad, st_m, prod, mounth_start, cnt_kv, year, _pr_ipot, _pr_rass
     t_ppo.append(shapka_yr)
     t_ppo.append(shapka_mnt)
     t_ppo.append(shapka_koefs)
+
+    # Добавляем данные в ППО
+    len_ = len(ppo)
+    sql.prov_PPO(id_obj=id_obj)
+    for i in range(1, len(ppo[len_-1])):
+        sql.input_ppo(id_obj=id_obj, yr=shapka_yr[i], mnt=shapka_mnt[i], dohod=ppo[len_-1][i])
 
     arr = []
     arr.append('ДДУ') # Считаем ДДУ
