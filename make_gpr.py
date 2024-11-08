@@ -9,6 +9,15 @@ class data_gpo:
         self.gpo = gpo
         self.dlit = dlit
 
+def changer_mnt(mnt):
+    ind_i = 0
+    arr = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
+    for i in range(len(arr)):
+        if arr[i] == mnt: 
+            ind_i = i
+            break
+    return arr[ind_i]
+
 def create_tabel_gpr(id_pr, prov_create):
     #Заготовка меняемой таблицы
     gpo = []
@@ -40,6 +49,20 @@ def create_tabel_gpr(id_pr, prov_create):
 
     #Подсчет таблицы ГПР по ОБЩИМ данным
     count_gpo(datas_obsh, name_rash, zavisim, prod, numbers)
+    #Добавляем данные в БД
+    for i in range(len(datas_obsh.gpo)):
+        z = datas_obsh.gpo[i][0].split()
+        year_ = yr_start
+        mnt_ = mnt_start
+        st_obsh_ = sql.found_id_st_obsh(id_pr=id_pr, code=z[0])
+        for j in range(1, len(datas_obsh.gpo[i])):
+            if datas_obsh.gpo[i][j] == 1:
+                sql.prov_BDR(id_st_obsh=st_obsh_)
+                sql.input_BDR_obsh(id_st_obsh=st_obsh_, yr=year_, mnt=mnt_)
+            mnt_ = changer_mnt(mnt_)
+            if mnt_ == 'Декабрь':
+                year_ += 1
+
     ttle_obsh = 'Общие статьи по проекту'
     # Проходимся по объектам строительства и сортируем по порядку строительства
     cnt = 0
@@ -87,6 +110,30 @@ def create_tabel_gpr(id_pr, prov_create):
             if object_str[j].posl == i+1:
                 arr_dl.append(all_obj[j].dlit)
         obsh_dlit.append(max(arr_dl))
+
+    #Добавляем данные в БД
+    yr_start_ = yr_start
+    mnt_start_ = mnt_start
+    for i in range(datas_obsh.dlit):         #Подбираем данные под начало строительства корпусов
+        mnt_start_ = changer_mnt(mnt_start_)
+        if mnt_start_ == 'Декабрь':
+            yr_start_ += 1
+    for i in range(max_cnt):
+        #Тут надо проверить последовательность
+        for j in range(len(all_obj)):
+            if object_str[j].posl == (i + 1):
+                for k in range(len(all_obj[j].gpo)):
+                    z = datas_obsh.gpo[k][0].split()
+                    year_ = yr_start_
+                    mnt_ = mnt_start_
+                    st_obsh_ = sql.found_id_obj_st(id_obj=object_str[j].id_, code=z[0]) 
+                    for l in range(1, len(all_obj[j].gpo[k])):
+                        if all_obj[j].gpo[k][l] == 1:
+                sql.prov_BDR(id_st_obsh=st_obsh_)
+                sql.input_BDR_obsh(id_st_obsh=st_obsh_, yr=year_, mnt=mnt_)
+            mnt_ = changer_mnt(mnt_)
+            if mnt_ == 'Декабрь':
+                year_ += 1
 
     # Доделываем первую таблицу
     full_gpr = [""] * (datas_obsh.dlit + sum(obsh_dlit) + 1)
@@ -429,6 +476,7 @@ def count_gpo(data_gpr, name_rash, zavisim, prod, numbers):
         for j in range(1, data_gpr.dlit+1):
             if ((dlina_obr[i] - int(prod_obr[i]) + 1) <= j) and (dlina_obr[i] >= j):
                 data_gpr.gpo[i][j] = 1
+            
 
 def insertion_sort(unsorted, nazv, zav, prod, ind, ish):
     """ сортировка вставками """
