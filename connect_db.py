@@ -57,6 +57,13 @@ class obj_str_ppo:
         self.m_st = m_st
         self.yr_st = yr_st
 
+class bdr:
+    def __init__(self, id_, id_st, yr, mnt):
+        self.id_ = id_
+        self.id_st = id_st
+        self.yr = yr
+        self.mnt = mnt
+
 class Sql:
     def __init__(self, database="FM_model", server=r"NODE2\DBLMSSQLSRV", username="connect_FM_model", password=r"9*%dA6lU&T6)p2PX", driver="ODBC Driver 17 for SQL Server"):
         connectionString = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
@@ -424,7 +431,7 @@ class Sql:
         zapros = "SELECT * FROM PPO_obj WHERE Id_obj = " + str(id_obj) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
-        if len(data[0]) != 0:
+        if len(data) != 0:
             zapros = "DELETE FROM PPO_obj WHERE Id_obj = "  + str(id_obj) + ";"
             cursor.execute(zapros)
             self.cnxn.commit()
@@ -432,11 +439,11 @@ class Sql:
 
     def prov_BDR(self, id_st_obsh):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT * FROM BDR_obj WHERE ID_st_obsh = " + str(id_st_obsh) + ";"
+        zapros = "SELECT * FROM BDR_obsh WHERE ID_st_obsh = " + str(id_st_obsh) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
-        if len(data[0]) != 0:
-            zapros = "DELETE FROM BDR_obj WHERE ID_st_obsh = "  + str(id_st_obsh) + ";"
+        if len(data) != 0:
+            zapros = "DELETE FROM BDR_obsh WHERE ID_st_obsh = "  + str(id_st_obsh) + ";"
             cursor.execute(zapros)
             self.cnxn.commit()
             cursor.close()
@@ -451,17 +458,62 @@ class Sql:
     def input_BDR_obsh(self, id_st_obsh, yr, mnt):
         cursor = self.cnxn.cursor()
         id_ = self.create_id("BDR_obsh")
-        zapros = "INSERT INTO BDR_obsh (ID, ID_st_obsh, yr, mnt) VALUES (" + str(id_) + ", " + str(id_st_obsh) + ", " + str(yr) + ", '" + mnt + "';"
+        zapros = "INSERT INTO BDR_obsh (ID, ID_st_obsh, yr, mnt) VALUES (" + str(id_) + ", " + str(id_st_obsh) + ", " + str(yr) + ", '" + mnt + "');"
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
 
     def found_id_obj_st(self, id_obj, code):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT obj_stati.ID FROM obj_stati INNER JOIN st_3_ur ON obj_stati.Id_st_3 = st_3_ur.ID WHERE obj_stati.Id_obj = " + str(id_obj) + "AND st_3_ur.code = '" + str(code) + "';"
+        zapros = "SELECT obj_stati.ID FROM obj_stati INNER JOIN st_3_ur ON obj_stati.Id_st_3 = st_3_ur.ID WHERE obj_stati.Id_obj = " + str(id_obj) + " AND st_3_ur.code = '" + str(code) + "';"
         cursor.execute(zapros)
         data = cursor.fetchall()
         return data[0][0]
+    
+    def prov_BDR_obj(self, id_st_obj):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM BDR_obj WHERE ID_st_obj = " + str(id_st_obj) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        if len(data) != 0:
+            zapros = "DELETE FROM BDR_obj WHERE ID_st_obj = "  + str(id_st_obj) + ";"
+            cursor.execute(zapros)
+            self.cnxn.commit()
+            cursor.close()
+
+    def input_BDR_obj(self, id_st_obj, yr, mnt):
+        cursor = self.cnxn.cursor()
+        id_ = self.create_id("BDR_obj")
+        zapros = "INSERT INTO BDR_obj (ID, ID_st_obj, yr, mnt) VALUES (" + str(id_) + ", " + str(id_st_obj) + ", " + str(yr) + ", '" + mnt + "');"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+    def take_data_BDR_obsh(self, id_st_obj):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, ID_st_obsh, yr, mnt FROM BDR_obsh WHERE ID_st_obsh = " + str(id_st_obj) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = bdr(data[i][0], data[i][1], data[i][2], data[i][3])
+            datas.append(el)
+        for el in datas:
+            el.mnt = del_probel(el.mnt)
+        return datas
+    
+    def take_nazv_BDR(self, id_bdr):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT st_3_ur.ID, st_3_ur.Id_st_2, st_3_ur.code, st_3_ur.nazv FROM st_3_ur INNER JOIN obsh_stati ON obsh_stati.Id_st_3 = st_3_ur.ID INNER JOIN BDR_obsh ON BDR_obsh.ID_st_obsh = obsh_stati.ID WHERE BDR_obsh.ID = " + str(id_bdr) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stati_ur(data[i][0], data[i][1], data[i][2], data[i][3])
+            datas.append(el)
+        for el in datas:
+            el.nazv = del_probel(el.nazv)
+        return datas[0]
 
 
 def make_arr_list(arr):
