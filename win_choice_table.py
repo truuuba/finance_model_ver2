@@ -1,12 +1,9 @@
-import customtkinter as CTk
-import sys
 from spinbox import Spinbox
 from tkinter import messagebox as mb
 from make_gpr import *
 from make_ppo import *
-
-CTk.set_appearance_mode("dark")
-CTk.set_default_color_theme("green")
+from win_bdr import *
+import sys
 
 class choice_table(CTk.CTk):
     def __init__(self, id_p):
@@ -33,7 +30,7 @@ class choice_table(CTk.CTk):
         #БДР
         self.bdr = CTk.CTkLabel(master=self, text="Таблица БДР")
         self.bdr.grid(row=4, column=0, padx=(5,5), pady=(5,5))
-        self.bdr_ex = CTk.CTkButton(master=self, text="Открыть таблицу БДР")
+        self.bdr_ex = CTk.CTkButton(master=self, text="Открыть таблицу БДР", command=self.open_win_bdr)
         self.bdr_ex.grid(row=5, column=0, padx=(5,5), pady=(5,5))
 
         #БДДС
@@ -81,5 +78,6 @@ class choice_table(CTk.CTk):
         create_tabel_ppo(id_pr=self.id_p, prov_create=True)
         mb.showinfo('Успешно!', 'Таблица ППО была успешно создана')
 
-
-
+    def open_win_bdr(self):
+        a = win_bdr(self.id_p)
+        a.mainloop()
