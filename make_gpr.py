@@ -16,7 +16,10 @@ def changer_mnt(mnt):
         if arr[i] == mnt: 
             ind_i = i
             break
-    return arr[ind_i]
+    if ind_i == 11:
+        return arr[0]
+    else:
+        return arr[ind_i + 1]
 
 def create_tabel_gpr(id_pr, prov_create):
     #Заготовка меняемой таблицы
@@ -55,13 +58,13 @@ def create_tabel_gpr(id_pr, prov_create):
         year_ = yr_start
         mnt_ = mnt_start
         st_obsh_ = sql.found_id_st_obsh(id_pr=id_pr, code=z[0])
+        sql.prov_BDR(id_st_obsh=st_obsh_)
         for j in range(1, len(datas_obsh.gpo[i])):
             if datas_obsh.gpo[i][j] == 1:
-                sql.prov_BDR(id_st_obsh=st_obsh_)
                 sql.input_BDR_obsh(id_st_obsh=st_obsh_, yr=year_, mnt=mnt_)
-            mnt_ = changer_mnt(mnt_)
             if mnt_ == 'Декабрь':
                 year_ += 1
+            mnt_ = changer_mnt(mnt_)
 
     ttle_obsh = 'Общие статьи по проекту'
     # Проходимся по объектам строительства и сортируем по порядку строительства
@@ -123,17 +126,21 @@ def create_tabel_gpr(id_pr, prov_create):
         for j in range(len(all_obj)):
             if object_str[j].posl == (i + 1):
                 for k in range(len(all_obj[j].gpo)):
-                    z = datas_obsh.gpo[k][0].split()
+                    z = all_obj[j].gpo[k][0].split()
                     year_ = yr_start_
                     mnt_ = mnt_start_
-                    st_obsh_ = sql.found_id_obj_st(id_obj=object_str[j].id_, code=z[0]) 
+                    st_obj_ = sql.found_id_obj_st(id_obj=object_str[j].id_, code=z[0])
+                    sql.prov_BDR_obj(st_obj_) 
                     for l in range(1, len(all_obj[j].gpo[k])):
                         if all_obj[j].gpo[k][l] == 1:
-                sql.prov_BDR(id_st_obsh=st_obsh_)
-                sql.input_BDR_obsh(id_st_obsh=st_obsh_, yr=year_, mnt=mnt_)
-            mnt_ = changer_mnt(mnt_)
-            if mnt_ == 'Декабрь':
-                year_ += 1
+                            sql.input_BDR_obj(st_obj_, year_, mnt_)
+                        if mnt_ == 'Декабрь':
+                            year_ += 1
+                        mnt_ = changer_mnt(mnt_)
+        for j in range(obsh_dlit[i]):
+            if mnt_start_ == 'Декабрь':
+                yr_start_ += 1
+            mnt_start_ = changer_mnt(mnt_start_)
 
     # Доделываем первую таблицу
     full_gpr = [""] * (datas_obsh.dlit + sum(obsh_dlit) + 1)
