@@ -9,6 +9,12 @@ class data_gpo:
         self.gpo = gpo
         self.dlit = dlit
 
+class for_upd:
+    def __init__(self, id_st, yr, mnt):
+        self.id_st = id_st
+        self.yr = yr
+        self.mnt = mnt
+
 def changer_mnt(mnt):
     ind_i = 0
     arr = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
@@ -57,14 +63,15 @@ def create_tabel_gpr(id_pr, prov_create):
         z = datas_obsh.gpo[i][0].split()
         year_ = yr_start
         mnt_ = mnt_start
+        arr_data = [] #массивчик под данные
         st_obsh_ = sql.found_id_st_obsh(id_pr=id_pr, code=z[0])
-        sql.prov_BDR(id_st_obsh=st_obsh_)
         for j in range(1, len(datas_obsh.gpo[i])):
             if datas_obsh.gpo[i][j] == 1:
-                sql.input_BDR_obsh(id_st_obsh=st_obsh_, yr=year_, mnt=mnt_)
+                arr_data.append(for_upd(id_st=st_obsh_, yr=year_, mnt=mnt_))
             if mnt_ == 'Декабрь':
                 year_ += 1
             mnt_ = changer_mnt(mnt_)
+        sql.prov_BDR(id_st_obsh=st_obsh_)
 
     ttle_obsh = 'Общие статьи по проекту'
     # Проходимся по объектам строительства и сортируем по порядку строительства
@@ -129,14 +136,14 @@ def create_tabel_gpr(id_pr, prov_create):
                     z = all_obj[j].gpo[k][0].split()
                     year_ = yr_start_
                     mnt_ = mnt_start_
+                    arr = [] # массив с данными по вводу
                     st_obj_ = sql.found_id_obj_st(id_obj=object_str[j].id_, code=z[0])
-                    sql.prov_BDR_obj(st_obj_) 
                     for l in range(1, len(all_obj[j].gpo[k])):
                         if all_obj[j].gpo[k][l] == 1:
-                            sql.input_BDR_obj(st_obj_, year_, mnt_)
+                            arr.append(for_upd(st_obj_, year_, mnt_))
                         if mnt_ == 'Декабрь':
                             year_ += 1
-                        mnt_ = changer_mnt(mnt_)
+                    sql.prov_BDR_obj(st_obj_, arr) 
         for j in range(obsh_dlit[i]):
             if mnt_start_ == 'Декабрь':
                 yr_start_ += 1
