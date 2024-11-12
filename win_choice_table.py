@@ -1,5 +1,4 @@
 from spinbox import Spinbox
-from tkinter import messagebox as mb
 from make_gpr import *
 from make_ppo import *
 from win_bdr import *
