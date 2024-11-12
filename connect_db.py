@@ -437,16 +437,25 @@ class Sql:
             self.cnxn.commit()
             cursor.close()
 
-    def prov_BDR(self, id_st_obsh):
+    def prov_BDR(self, id_st_obsh, array):
         cursor = self.cnxn.cursor()
         zapros = "SELECT * FROM BDR_obsh WHERE ID_st_obsh = " + str(id_st_obsh) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
         if len(data) != 0:
-            zapros = "DELETE FROM BDR_obsh WHERE ID_st_obsh = "  + str(id_st_obsh) + ";"
-            cursor.execute(zapros)
-            self.cnxn.commit()
-            cursor.close()
+            for i in range(len(data)):
+                zapros = "UPDATE BDR_obsh SET yr = " + str(array[i].yr) + ", mnt = '" + array[i].mnt + "' WHERE ID = " + data[i] + ";" 
+                cursor.execute(zapros)
+                self.cnxn.commit()
+                cursor.close()
+        else:
+            for el in array:
+                cursor = self.cnxn.cursor()
+                id_ = self.create_id("BDR_obsh")
+                zapros = "INSERT INTO BDR_obsh (ID, ID_st_obsh, yr, mnt) VALUES (" + str(id_) + ", " + str(id_st_obsh) + ", " + str(el.yr) + ", '" + el.mnt + "');"
+                cursor.execute(zapros)
+                self.cnxn.commit()
+                cursor.close()
 
     def found_id_st_obsh(self, id_pr, code):
         cursor = self.cnxn.cursor()
@@ -454,14 +463,6 @@ class Sql:
         cursor.execute(zapros)
         data = cursor.fetchall()
         return data[0][0]
-    
-    def input_BDR_obsh(self, id_st_obsh, yr, mnt):
-        cursor = self.cnxn.cursor()
-        id_ = self.create_id("BDR_obsh")
-        zapros = "INSERT INTO BDR_obsh (ID, ID_st_obsh, yr, mnt) VALUES (" + str(id_) + ", " + str(id_st_obsh) + ", " + str(yr) + ", '" + mnt + "');"
-        cursor.execute(zapros)
-        self.cnxn.commit()
-        cursor.close()
 
     def found_id_obj_st(self, id_obj, code):
         cursor = self.cnxn.cursor()
@@ -469,25 +470,26 @@ class Sql:
         cursor.execute(zapros)
         data = cursor.fetchall()
         return data[0][0]
-    
-    def prov_BDR_obj(self, id_st_obj):
+
+    def prov_BDR_obj(self, id_st_obj, array):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT * FROM BDR_obj WHERE ID_st_obj = " + str(id_st_obj) + ";"
+        zapros = "SELECT ID FROM BDR_obj WHERE ID_st_obj = " + str(id_st_obj) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
         if len(data) != 0:
-            zapros = "DELETE FROM BDR_obj WHERE ID_st_obj = "  + str(id_st_obj) + ";"
-            cursor.execute(zapros)
-            self.cnxn.commit()
-            cursor.close()
-
-    def input_BDR_obj(self, id_st_obj, yr, mnt):
-        cursor = self.cnxn.cursor()
-        id_ = self.create_id("BDR_obj")
-        zapros = "INSERT INTO BDR_obj (ID, ID_st_obj, yr, mnt) VALUES (" + str(id_) + ", " + str(id_st_obj) + ", " + str(yr) + ", '" + mnt + "');"
-        cursor.execute(zapros)
-        self.cnxn.commit()
-        cursor.close()
+            for i in range(len(data)):
+                zapros = "UPDATE BDR_obj SET yr = " + str(array[i].yr) + ", mnt = '" + array[i].mnt + "' WHERE ID = " + data[i] + ";" 
+                cursor.execute(zapros)
+                self.cnxn.commit()
+                cursor.close()
+        else:
+            for el in array:
+                cursor = self.cnxn.cursor()
+                id_ = self.create_id("BDR_obj")
+                zapros = "INSERT INTO BDR_obj (ID, ID_st_obj, yr, mnt) VALUES (" + str(id_) + ", " + str(id_st_obj) + ", " + str(el.yr) + ", '" + el.mnt + "');"
+                cursor.execute(zapros)
+                self.cnxn.commit()
+                cursor.close()
 
     def take_data_BDR_obsh(self, id_st_obj):
         cursor = self.cnxn.cursor()
@@ -513,8 +515,15 @@ class Sql:
             datas.append(el)
         for el in datas:
             el.nazv = del_probel(el.nazv)
+            el.code = del_probel(el.code)
         return datas[0]
-
+    
+    def update_bdr_obsh(self, plan_ds, id_):
+        cursor = self.cnxn.cursor()
+        zapros = "UPDATE BDR_obsh SET plan_ds = " + str(plan_ds) + " WHERE ID = " + str(id_) + ";"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
 
 def make_arr_list(arr):
     arr2 = []
