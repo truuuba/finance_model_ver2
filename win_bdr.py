@@ -1,14 +1,11 @@
-import customtkinter as CTk
-from connect_db import sql
-import re
-from tkinter import messagebox as mb
+from win_bdr2 import *
 
 CTk.set_appearance_mode("dark")
 CTk.set_default_color_theme("green")
 
 class win_for_trati(CTk.CTkScrollableFrame):
     def __init__(self, master, bdr_stati, entry_bdr_stati):
-        super().__init__(master, width=1000, height=400)
+        super().__init__(master, width=1000, height=550)
         txt = ""
         cnt = 0
         for i in range(len(bdr_stati)):
@@ -45,8 +42,17 @@ class win_bdr(CTk.CTk):
         self.win_input_bdr = win_for_trati(self, self.bdr_stati, self.entry_bdr_stati)
         self.win_input_bdr.grid(row=1, column=0, padx=(5,5), pady=(5,5))
 
-        self.but_next = CTk.CTkButton(master=self, text="Данные введены", command=self.next_win_bdr)
+        self.but_next = CTk.CTkButton(master=self, text="Обновить данные", command=self.next_win_bdr)
         self.but_next.grid(row=2, column=0, padx=(5,5), pady=(5,5))
+
+        if sql.found_zapisi_GPR_obsh:
+            self.but_next2 = CTk.CTkButton(master=self, text="Использовать существующие данные", command=self.next_win)
+            self.but_next2.grid(row=3, column=0, padx=(5,5), pady=(5,5))
+
+    def next_win(self):
+        self.withdraw()
+        a = win_bdr2(self.id_p)
+        a.mainloop()
 
     def next_win_bdr(self):
         patt = r"^[0-9]+$"
@@ -62,6 +68,8 @@ class win_bdr(CTk.CTk):
                 for j in range(len(self.bdr_stati[i])):
                     sql.update_bdr_obsh(self.entry_bdr_stati[cnt].get(), self.bdr_stati[i][j].id_)
                     cnt += 1
-            mb.showinfo('ура', 'победа')
+            self.withdraw()
+            a = win_bdr2(self.id_p)
+            a.mainloop()
         else:
             mb.showerror('Ошибка!', 'Были записаны неверные данные в ГПР')
