@@ -432,6 +432,7 @@ class Sql:
         cursor.execute(zapros)
         data = cursor.fetchall()
         if len(data) != 0:
+            cursor = self.cnxn.cursor()
             zapros = "DELETE FROM PPO_obj WHERE Id_obj = "  + str(id_obj) + ";"
             cursor.execute(zapros)
             self.cnxn.commit()
@@ -444,7 +445,8 @@ class Sql:
         data = cursor.fetchall()
         if len(data) != 0:
             for i in range(len(data)):
-                zapros = "UPDATE BDR_obsh SET yr = " + str(array[i].yr) + ", mnt = '" + array[i].mnt + "' WHERE ID = " + data[i] + ";" 
+                cursor = self.cnxn.cursor()
+                zapros = "UPDATE BDR_obsh SET yr = " + str(array[i].yr) + ", mnt = '" + array[i].mnt + "' WHERE ID = " + str(data[i][0]) + ";" 
                 cursor.execute(zapros)
                 self.cnxn.commit()
                 cursor.close()
@@ -478,9 +480,10 @@ class Sql:
         data = cursor.fetchall()
         if len(data) != 0:
             for i in range(len(data)):
-                zapros = "UPDATE BDR_obj SET yr = " + str(array[i].yr) + ", mnt = '" + array[i].mnt + "' WHERE ID = " + data[i] + ";" 
+                cursor = self.cnxn.cursor()
+                zapros = "UPDATE BDR_obj SET yr = " + str(array[i].yr) + ", mnt = '" + array[i].mnt + "' WHERE ID = " + str(data[i][0]) + ";" 
                 cursor.execute(zapros)
-                self.cnxn.commit()
+                self.cnxn.commit() 
                 cursor.close()
         else:
             for el in array:
@@ -494,6 +497,19 @@ class Sql:
     def take_data_BDR_obsh(self, id_st_obj):
         cursor = self.cnxn.cursor()
         zapros = "SELECT ID, ID_st_obsh, yr, mnt FROM BDR_obsh WHERE ID_st_obsh = " + str(id_st_obj) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = bdr(data[i][0], data[i][1], data[i][2], data[i][3])
+            datas.append(el)
+        for el in datas:
+            el.mnt = del_probel(el.mnt)
+        return datas
+    
+    def take_data_BDR_obj(self, id_st_obj):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, ID_st_obj, yr, mnt FROM BDR_obj WHERE ID_st_obj = " + str(id_st_obj) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
         datas = []
@@ -521,6 +537,33 @@ class Sql:
     def update_bdr_obsh(self, plan_ds, id_):
         cursor = self.cnxn.cursor()
         zapros = "UPDATE BDR_obsh SET plan_ds = " + str(plan_ds) + " WHERE ID = " + str(id_) + ";"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+    def found_zapisi_GPR_obsh(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT BDR_obsh.plan_ds FROM BDR_obsh INNER JOIN obsh_stati ON BDR_obsh.ID_st_obsh = obsh_stati.ID INNER JOIN project ON obsh_stati.Id_p = project.ID WHERE project.ID = " + str(id_p) + ";"
+        cursor.execute(zapros)
+        data = make_arr_list(cursor.fetchall())
+        for el in data:
+            if el == None:
+                return False
+        return True
+    
+    def found_zapisi_GPR_obj(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT BDR_obj.plan_ds FROM BDR_obj INNER JOIN obj_stati ON BDR_obj.Id_st_obj = obj_stati.ID INNER JOIN object_str ON obj_stati.Id_obj = object_str.ID INNER JOIN project ON object_str.Id_p = project.ID WHERE project.ID = " + str(id_p) + ";"
+        cursor.execute(zapros)
+        data = make_arr_list(cursor.fetchall())
+        for el in data:
+            if el == None:
+                return False
+        return True
+    
+    def update_bdr_obj(self, id_, plan_ds):
+        cursor = self.cnxn.cursor()
+        zapros = "UPDATE BDR_obj SET plan_ds = " + str(plan_ds) + " WHERE ID = " + str(id_) + ";"
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
