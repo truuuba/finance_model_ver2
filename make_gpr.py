@@ -71,7 +71,7 @@ def create_tabel_gpr(id_pr, prov_create):
             if mnt_ == 'Декабрь':
                 year_ += 1
             mnt_ = changer_mnt(mnt_)
-        sql.prov_BDR(id_st_obsh=st_obsh_)
+        sql.prov_BDR(id_st_obsh=st_obsh_, array=arr_data)
 
     ttle_obsh = 'Общие статьи по проекту'
     # Проходимся по объектам строительства и сортируем по порядку строительства
@@ -143,6 +143,7 @@ def create_tabel_gpr(id_pr, prov_create):
                             arr.append(for_upd(st_obj_, year_, mnt_))
                         if mnt_ == 'Декабрь':
                             year_ += 1
+                        mnt_ = changer_mnt(mnt_)
                     sql.prov_BDR_obj(st_obj_, arr) 
         for j in range(obsh_dlit[i]):
             if mnt_start_ == 'Декабрь':
