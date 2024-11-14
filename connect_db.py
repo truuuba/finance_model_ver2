@@ -175,7 +175,7 @@ class Sql:
     
     def take_list_st_2(self):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT * FROM st_2_ur WHERE st_2_ur.Id_st_1 = 1 OR st_2_ur.Id_st_1 = 2 OR st_2_ur.Id_st_1 = 3 OR st_2_ur.Id_st_1 = 5;"
+        zapros = "SELECT * FROM st_2_ur WHERE st_2_ur.Id_st_1 = 1 OR st_2_ur.Id_st_1 = 2 OR st_2_ur.Id_st_1 = 3 OR st_2_ur.Id_st_1 = 5 OR st_2_ur.Id_st_1 = 6 OR st_2_ur.Id_st_1 = 7 OR st_2_ur.code = '10.2' OR st_2_ur.code = '11.2' OR st_2_ur.code = '12.2' OR st_2_ur.code = '13.2' OR st_2_ur.code = '14.2' OR st_2_ur.code = '15.2';"
         cursor.execute(zapros)
         data = cursor.fetchall()
         datas = []
@@ -330,7 +330,7 @@ class Sql:
     
     def obsh_stati_for_t(self, id_p):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT ID, Id_st_3, zavisim, prod, ind FROM obsh_stati WHERE Id_p = " + str(id_p) + " ORDER BY ind;"
+        zapros = "SELECT obsh_stati.ID, obsh_stati.Id_st_3, obsh_stati.zavisim, obsh_stati.prod, obsh_stati.ind FROM obsh_stati INNER JOIN st_3_ur ON obsh_stati.Id_st_3 = st_3_ur.ID INNER JOIN st_2_ur ON st_3_ur.Id_st_2 = st_2_ur.ID WHERE obsh_stati.Id_p = " + str(id_p) + " AND (st_2_ur.Id_st_1 = 1 OR st_2_ur.Id_st_1 = 2 OR st_2_ur.Id_st_1 = 3 OR st_2_ur.Id_st_1 = 5) ORDER BY obsh_stati.ind;"
         cursor.execute(zapros)
         data = cursor.fetchall()
         datas = []
@@ -567,6 +567,47 @@ class Sql:
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
+
+    def take_obsh_stati_GPR(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT obsh_stati.ID, obsh_stati.Id_st_3 FROM obsh_stati INNER JOIN st_3_ur ON obsh_stati.Id_st_3 = st_3_ur.ID INNER JOIN st_2_ur ON st_3_ur.Id_st_2 = st_2_ur.ID WHERE obsh_stati.Id_p = " + str(id_p) + " AND (st_2_ur.Id_st_1 = 1 OR st_2_ur.Id_st_1 = 2 OR st_2_ur.Id_st_1 = 3 OR st_2_ur.Id_st_1 = 5);"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stati(data[i][0], data[i][1])
+            datas.append(el)
+        return datas
+    
+    def take_stati_iskl(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT obsh_stati.ID, obsh_stati.Id_st_3 FROM obsh_stati INNER JOIN st_3_ur ON obsh_stati.Id_st_3 = st_3_ur.ID INNER JOIN st_2_ur ON st_3_ur.Id_st_2 = st_2_ur.ID WHERE obsh_stati.Id_p = " + str(id_p) + " AND (st_2_ur.Id_st_1 = 6 OR st_2_ur.Id_st_1 = 7 OR st_2_ur.code = '10.2' OR st_2_ur.code = '11.2' OR st_2_ur.code = '12.2' OR st_2_ur.code = '13.2' OR st_2_ur.code = '14.2' OR st_2_ur.code = '15.2');"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stati(data[i][0], data[i][1])
+            datas.append(el)
+        return datas
+    
+    def input_BDR_iskl(self, id_st, ds):
+        cursor = self.cnxn.cursor()
+        id_ = self.create_id("BDR_iskl")
+        zapros = "INSERT INTO BDR_iskl (ID, ID_st_obsh, ds) VALUES (" + str(id_) + ", " + str(id_st) + ", " + str(ds) + ");"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+    def prov_BDR_iskl(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM BDR_iskl INNER JOIN obsh_stati ON BDR_iskl.ID_st_obsh = obsh_stati.ID WHERE obsh_stati.Id_p = " + str(id_p) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        if len(data) == 0:
+            return False
+        else:
+            return True
+
 
 def make_arr_list(arr):
     arr2 = []
