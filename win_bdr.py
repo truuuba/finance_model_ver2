@@ -45,7 +45,7 @@ class win_bdr(CTk.CTk):
         self.but_next = CTk.CTkButton(master=self, text="Обновить данные", command=self.next_win_bdr)
         self.but_next.grid(row=2, column=0, padx=(5,5), pady=(5,5))
 
-        if sql.found_zapisi_GPR_obsh:
+        if sql.found_zapisi_GPR_obsh(self.id_p):
             self.but_next2 = CTk.CTkButton(master=self, text="Использовать существующие данные", command=self.next_win)
             self.but_next2.grid(row=3, column=0, padx=(5,5), pady=(5,5))
 
