@@ -34,7 +34,7 @@ class win_for_gpr(CTk.CTk):
         self.id_p = id_p
         self.entry_prod = []
         self.entry_zavis = []
-        self.params_r = sql.take_obsh_stati(id_p)
+        self.params_r = sql.take_obsh_stati_GPR(id_p)
         self.indexes = []
 
         self.make_gpr = CTk.CTkLabel(master=self, text="Создание ГПР по общим статьям")
