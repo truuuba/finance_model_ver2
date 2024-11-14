@@ -206,7 +206,7 @@ def cout_ppo(ploshad, st_m, prod, mounth_start, cnt_kv, year, _pr_ipot, _pr_rass
     t_ppo.append(array)
     array = ['Срок строительства', prod]
     array2 = ['Площадь', ploshad]
-    array3 = ['Средняя цена за кв.м., т.р.', st_m]
+    array3 = ['Средняя цена за кв.м.', st_m]
     array4 = ['Выручка, т.р.', virochka]
     array5 = ['', '']
     array6 = ['Кол-во квартир в доме', cnt_kv]
@@ -215,7 +215,7 @@ def cout_ppo(ploshad, st_m, prod, mounth_start, cnt_kv, year, _pr_ipot, _pr_rass
     array9 = ['Доля договоров по ипотеке', str(_pr_ipot) + '%']
     array10 = ['Доля договоров с рассрочкой платежа', str(_pr_rassr) + '%']
     array11 = [r'100% оплата', str(_pr_full) + '%']
-    array12 = ['Первоначадбный взнос по рассрочке', str(_pr_rassr_vznos) + '%']
+    array12 = ['Первоначальный взнос по рассрочке', str(_pr_rassr_vznos) + '%']
     for i in range(len(t_ppo[0]) - 2):
         array.append("")
         array2.append("")
