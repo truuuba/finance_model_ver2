@@ -1,14 +1,11 @@
-import customtkinter as CTk
-from connect_db import sql
-import re
-from tkinter import messagebox as mb
+from win_bdr3 import *
 
 CTk.set_appearance_mode("dark")
 CTk.set_default_color_theme("green")
 
 class win_for_trati_obj(CTk.CTkScrollableFrame):
     def __init__(self, master, objects_, entry_bdr_stati, id_bdr_st):
-        super().__init__(master, width=1000, height=600)
+        super().__init__(master, width=1000, height=550)
         cnt = 0
         for el in objects_:
             self.ttle_obj = CTk.CTkLabel(master=self, text=el.nazv, bg_color="#E63946")
@@ -55,8 +52,13 @@ class win_bdr2(CTk.CTk):
         self.but_next.grid(row=2, column=0, padx=(5,5), pady=(5,5))
 
         if sql.found_zapisi_GPR_obj(self.id_p):
-            self.but_next2 = CTk.CTkButton(master=self, text="Использовать существующие данные")
+            self.but_next2 = CTk.CTkButton(master=self, text="Использовать существующие данные", command=self.next_win2)
             self.but_next2.grid(row=3, column=0, padx=(5,5), pady=(5,5))
+
+    def next_win2(self):
+        self.withdraw()
+        a = win_bdr3(id_p=self.id_p)
+        a.mainloop()
 
     def next_win(self):
         prov = True
@@ -70,6 +72,8 @@ class win_bdr2(CTk.CTk):
             for i in range(len(self.entry_bdr_stati)):
                 for j in range(len(self.entry_bdr_stati[i])):
                     sql.update_bdr_obj(id_=self.id_bdr_st[i][j], plan_ds=self.entry_bdr_stati[i][j].get())
-            mb.showinfo('успешно', 'победа')
+            self.withdraw()
+            a = win_bdr3(id_p=self.id_p)
+            a.mainloop()
         else:
             mb.showerror('Ошибка!', 'Неверно введены данные!')
