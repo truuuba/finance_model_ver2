@@ -1,7 +1,7 @@
 import customtkinter as CTk
-from connect_db import sql
 import re
 from tkinter import messagebox as mb
+from make_bdr import *
 
 CTk.set_appearance_mode("dark")
 CTk.set_default_color_theme("green")
@@ -50,8 +50,10 @@ class win_bdr3(CTk.CTk):
             if not match_ds:
                 prov = False
         if prov:
+            if sql.prov_BDR_iskl(id_p=self.id_p):
+                sql.upd_BDR_iskl(obsh_st=self.obsh_st)
             for i in range(len(self.entr_st)):
-                sql.input_BDR_iskl(id_st=self.obsh_st[i].id_, ds=self.entr_st[i].get())
+                sql.input_BDR_iskl(id_st=self.obsh_st[i].id_, ds=self.entr_st[i].get()) # добавить update
             mb.showinfo("Успешно!", "Таблица БДР создана")
         else:
             mb.showerror("Ошибка!", "Введены неверные значения")
