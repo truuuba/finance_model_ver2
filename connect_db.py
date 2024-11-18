@@ -641,14 +641,14 @@ class Sql:
         zapros = "SELECT prod FROM project WHERE ID = " + str(id_p) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
-        return data[0]
+        return data[0][0]
     
     def take_st3(self, id_obsh):
         cursor = self.cnxn.cursor()
         zapros = "SELECT st_3_ur.ID, st_3_ur.Id_st_2, st_3_ur.code, st_3_ur.nazv FROM st_3_ur INNER JOIN obsh_stati ON obsh_stati.Id_st_3 = st_3_ur.ID WHERE obsh_stati.ID = " + str(id_obsh) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
-        el = stati_ur(data[0], data[1], del_probel(data[2]), del_probel(data[3]))
+        el = stati_ur(data[0][0], data[0][1], del_probel(data[0][2]), del_probel(data[0][3]))
         return el
     
     def take_st2(self, id_st3):
@@ -656,7 +656,7 @@ class Sql:
         zapros = "SELECT st_2_ur.ID, st_2_ur.Id_st_1, st_2_ur.code, st_2_ur.nazv FROM st_2_ur INNER JOIN st_3_ur ON st_3_ur.Id_st_2 = st_2_ur.ID WHERE st_3_ur.ID = " + str(id_st3) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
-        el = stati_ur(data[0], data[1], del_probel(data[2]), del_probel(data[3]))
+        el = stati_ur(data[0][0], data[0][1], del_probel(data[0][2]), del_probel(data[0][3]))
         return el
     
     def take_st1(self, id_st2):
@@ -664,7 +664,7 @@ class Sql:
         zapros = "SELECT st_1_ur.ID, st_1_ur.code, st_1_ur.nazv FROM st_1_ur INNER JOIN st_2_ur ON st_2_ur.Id_st_1 = st_1_ur.ID WHERE st_2_ur.ID = " + str(id_st2) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
-        el = st_ur1(data[0], del_probel(data[1]), del_probel(data[2]))
+        el = st_ur1(data[0][0], del_probel(data[0][1]), del_probel(data[0][2]))
         return el
 
     def take_BDR_obsh(self, id_obsh):
@@ -672,22 +672,40 @@ class Sql:
         zapros = "SELECT ID, ID_st_obsh, mnt, yr, plan_ds FROM BDR_obsh WHERE ID_st_obsh = " + str(id_obsh) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
-        datas = []
-        for i in range(len(data)):
-            el = bdr_(data[i][0], data[i][1], data[i][3], data[i][2], data[i][4])
-            datas.append(el)
-        for el in datas:
-            el.mnt = del_probel(el.mnt)
-        return datas
+        if len(data) != 0:
+            datas = []
+            for i in range(len(data)):
+                el = bdr_(data[i][0], data[i][1], data[i][3], data[i][2], data[i][4])
+                datas.append(el)
+            for el in datas:
+                el.mnt = del_probel(el.mnt)
+            return datas
+        else:
+            return False
     
     def take_BDR_iskl(self, id_obsh):
         cursor = self.cnxn.cursor()
         zapros = "SELECT ID, ID_st_obsh, ds FROM BDR_iskl WHERE ID_st_obsh = " + str(id_obsh) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
-        el = bdr_iskl(data[0], data[1], data[2])
-        return el
-
+        if len(data) != 0:
+            el = bdr_iskl(data[0][0], data[0][1], data[0][2])
+            return el
+        else:
+            return False
+        
+    def take_data_BDR_obj_t(self, id_st_obj):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, ID_st_obj, yr, mnt, plan_ds FROM BDR_obj WHERE ID_st_obj = " + str(id_st_obj) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = bdr_(data[i][0], data[i][1], data[i][2], data[i][3], data[i][4])
+            datas.append(el)
+        for el in datas:
+            el.mnt = del_probel(el.mnt)
+        return datas
 
 def make_arr_list(arr):
     arr2 = []
