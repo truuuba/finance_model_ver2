@@ -706,6 +706,17 @@ class Sql:
         for el in datas:
             el.mnt = del_probel(el.mnt)
         return datas
+    
+    def _take_obsh_stati_(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT obsh_stati.ID, obsh_stati.Id_st_3 FROM obsh_stati INNER JOIN st_3_ur ON obsh_stati.Id_st_3 = st_3_ur.ID WHERE obsh_stati.Id_p = " + str(id_p) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stati(data[i][0], data[i][1])
+            datas.append(el)
+        return datas
 
 def make_arr_list(arr):
     arr2 = []
