@@ -1,5 +1,7 @@
 from connect_db import sql
 from transliterate import translit
+import os
+import pandas as pd
 
 def changer_mnt(mnt):
     ind_i = 0
@@ -26,7 +28,6 @@ def create_tabel_bdr(id_pr):
     #Берем данные по названию проекта
     n_t = sql.take_name_pr(id_pr)
     name_table = translit(n_t, language_code='ru', reversed=True)
-    sht_name = []
 
     #Создаем шапку таблицы
     mnt_start = sql.take_mnt_start(id_pr) 
@@ -38,7 +39,7 @@ def create_tabel_bdr(id_pr):
     Вытаксиваем общие статьи 1,2,3,5
     '''
     #Поиск общих статей
-    obsh_st = sql.take_obsh_stati_GPR(id_pr)
+    obsh_st = sql._take_obsh_stati_(id_pr)
     #БДР по общим статьям
     arr_BDR_obsh = []
     arr_BDR_iskl = []
@@ -151,21 +152,107 @@ def create_tabel_bdr(id_pr):
         arr.append(0)
     bdr_res.append(arr)
 
-    #Массивы под уровни статей
-
     #Проходим по объектам строительства
     for i, el in enumerate(object_str):
         arr_obj = [el.nazv]
         for j in range(prod):
             arr_obj.append(0)
-        #Создаем массивы под статьи
+        #Массивы для сортировки
         arr_elems_2 = []
         arr_elems_3 = []
         #Проходимся по статьям 2 уровня
         for el2 in arr_obj_2st:
-            arr_elems_2.append(el2.code + ' ' + el2.nazv)
-            for el3 in arr_obj_3st:
-                if el2.id_ == el3.id_st:
-                    
+            Arr_elems_3 = []
+            #Создание массива по 2 статье
+            elem_st2 = [el2.code + ' ' + el2.nazv]
+            for j in range(prod):
+                elem_st2.append(0)
+            for e in arr_obj_3st:
+                for el3 in e:
+                    if el2.id_ == el3.id_st:
+                        #Создание массива по 3 статье
+                        elem_st3 = [el3.code + ' ' + el3.nazv]
+                        for j in range(prod):
+                            elem_st3.append(0)
+                        #статьи объектов 
+                        for elem in obj_stati[i]:
+                            #Проверка статей объектов
+                            if elem.id_o == el3.id_:
+                                for elements in BDR_obj_stati[i]:
+                                    for element in elements:
+                                        #Проверка по статьям БДР
+                                        if element.id_st == elem.id_:
+                                            #Цикл по всей продолжительности проекта
+                                            for j, time in enumerate(shapka):
+                                                temp = element.mnt + " " + str(element.yr)
+                                                #Проверка по времени расходов
+                                                if time == temp:
+                                                    elem_st3[j] = float(element.plan_ds)
+                                                    elem_st2[j] += float(element.plan_ds)
+                        Arr_elems_3.append(elem_st3) #Данные по 2 конкретной статье                            
+            arr_elems_2.append(elem_st2) #Массив 2 статей
+            arr_elems_3.append(Arr_elems_3) #Массив 3 статей внутри вторых
+        bdr_res.append(arr_obj)
+        for i in range(len(arr_elems_2)):
+            bdr_res.append(arr_elems_2[i])
+            for j in range(len(arr_elems_3[i])):
+                bdr_res.append(arr_elems_3[i][j])
+
+    '''
+    Разбираем исключения в общих статьях
+    '''
+    for el in arr_st_1:
+        #Проверка под общие статы
+        if el.id_ == 6 or el.id_ == 7 or el.id_ == 10 or el.id_ == 11 or el.id_ == 12 or el.id_ == 13 or el.id_ == 14 or el.id_ == 15:
+            #Массивы для сортировки
+            arr_elems_2 = []
+            arr_elems_3 = []
+            elem_st1 = [el.code + ' ' + el.nazv]
+            for i in range(prod):
+                elem_st1.append(0)
+            for el2 in arr_st_2:
+                #Проверка подходящей статьи на втором уровне
+                if el2.id_st == el.id_:
+                    Arr_elems_3 = []
+                    #Создание массива по 2 статье
+                    elem_st2 = [el2.code + ' ' + el2.nazv]
+                    for i in range(prod):
+                        elem_st2.append(0)
+                    for el3 in arr_st_3:
+                        #Проверка подходящей статьи на третьем уровне
+                        if el3.id_st == el2.id_:
+                            #Создание массива по 3 статье
+                            elem_st3 = [el3.code + ' ' + el3.nazv]
+                            for i in range(prod):
+                                elem_st3.append(0)
+                            for elem in obsh_st:
+                                #Проверка на общие статьи
+                                if el3.id_ == elem.id_o:
+                                    for element in arr_BDR_iskl:
+                                        #Проверка на БДР и общих статей
+                                        if element.id_st == elem.id_:
+                                            #Цикл по всей продолжительности проекта
+                                            for i in range(len(shapka)-1):
+                                                a = float(element.ds)/prod
+                                                elem_st3[i+1] = round(a, 2)
+                                                elem_st2[i+1] += round(a, 2)
+                                                elem_st1[i+1] += round(a, 2)
+                            Arr_elems_3.append(elem_st3) #Данные по 2 конкретной статье
+                    arr_elems_2.append(elem_st2) #Массив 2 статей
+                    arr_elems_3.append(Arr_elems_3) #Массив 3 статей внутри вторых
+            bdr_res.append(elem_st1)
+            for i in range(len(arr_elems_2)):
+                bdr_res.append(arr_elems_2[i])
+                for j in range(len(arr_elems_3[i])):
+                    bdr_res.append(arr_elems_3[i][j])
+
+    
+
+    
+
 
 create_tabel_bdr(4)
+
+#https://coolors.co/582f0e-7f4f24-936639-a68a64-b6ad90-c2c5aa-a4ac86-656d4a-414833-333d29
+#https://coolors.co/cad2c5-84a98c-52796f-354f52-2f3e46
+#https://coolors.co/22223b-4a4e69-9a8c98-c9ada7-f2e9e4
