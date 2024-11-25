@@ -2,6 +2,7 @@ from spinbox import Spinbox
 from make_gpr import *
 from make_ppo import *
 from win_bdr import *
+from win_bdds import *
 import sys
 
 class choice_table(CTk.CTk):
@@ -35,11 +36,11 @@ class choice_table(CTk.CTk):
         #БДДС
         self.bdds = CTk.CTkLabel(master=self, text="Таблица БДДС")
         self.bdds.grid(row=6, column=0, padx=(5,5), pady=(5,5))
-        self.bdds_ex = CTk.CTkButton(master=self, text="Создать таблицу БДДС в Excel")
+        self.bdds_ex = CTk.CTkButton(master=self, text="Создать таблицу БДДС в Excel", command=self.open_win_bdds)
         self.bdds_ex.grid(row=7, column=0, padx=(5,5), pady=(5,5))
 
         #Изменения в конкретных таблицах
-        self.changer = CTk.CTkLabel(master=self, text="Добавить изменения в талицу")
+        self.changer = CTk.CTkLabel(master=self, text="Добавить изменения в таблицу")
         self.changer.grid(row=8, column=0, padx=(5,5), pady=(15,5))
         self.changer_check_box = CTk.CTkComboBox(master=self, values=["ГПР", "ППО", "БДДС"])
         self.changer_check_box.grid(row=9, column=0, padx=(5,5), pady=(5,5))
@@ -79,4 +80,8 @@ class choice_table(CTk.CTk):
 
     def open_win_bdr(self):
         a = win_bdr(self.id_p)
+        a.mainloop()
+
+    def open_win_bdds(self):
+        a = win_bdds(self.id_p)
         a.mainloop()
