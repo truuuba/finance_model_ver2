@@ -1,8 +1,5 @@
 from win_bdr2 import *
 
-CTk.set_appearance_mode("dark")
-CTk.set_default_color_theme("green")
-
 class win_for_trati(CTk.CTkScrollableFrame):
     def __init__(self, master, bdr_stati, entry_bdr_stati):
         super().__init__(master, width=1000, height=550)
