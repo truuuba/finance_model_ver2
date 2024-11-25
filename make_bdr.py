@@ -29,14 +29,25 @@ def create_tabel_bdr(id_pr):
     n_t = sql.take_name_pr(id_pr)
     name_table = translit(n_t, language_code='ru', reversed=True)
 
-    #Создаем шапку таблицы
+    #Время старта строительства
     mnt_start = sql.take_mnt_start(id_pr) 
     yr_start = sql.take_yr_start(id_pr)
-    prod = sql.take_prod_proj(id_pr)
+
+    #Вытаскиваем объекты строительства
+    object_str = sql.take_obj_str(id_p=id_pr)
+
+    #Информация по продолжительности от ГПР
     shapka = make_shapka(yr=yr_start, mnt=mnt_start, prod=prod)
+    prod = sql.take_prod_proj(id_pr)
+
+    #Ищем максимальную шапку
+    max_shapka = []
+    for el in object_str:
+        m_start_pr = 
+        yr_start_pr =
 
     '''
-    Вытаксиваем общие статьи 1,2,3,5
+    Вытаскиваем общие статьи 1,2,3,5
     '''
     #Поиск общих статей
     obsh_st = sql._take_obsh_stati_(id_pr)
@@ -126,8 +137,6 @@ def create_tabel_bdr(id_pr):
     '''
     Разбираем объекты строительства
     '''
-    #Вытаскиваем объекты строительства
-    object_str = sql.take_obj_str(id_p=id_pr)
     #Вытаскиваем статьи по объектам
     obj_stati = []
     #Статьи БДР
@@ -246,6 +255,13 @@ def create_tabel_bdr(id_pr):
                 for j in range(len(arr_elems_3[i])):
                     bdr_res.append(arr_elems_3[i][j])
 
+    #Начинаем считать поступления
+    arr = ['Поступления']
+    for i in range(prod):
+        arr.append(0)
+    #Выделяем доходы по каждому объекту строительства
+    for el in object_str:
+        #сначала разобраться с шапкой
     
 
     
