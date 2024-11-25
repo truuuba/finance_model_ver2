@@ -84,6 +84,22 @@ class bdr_iskl:
         self.id_st = id_st
         self.ds = ds
 
+class st_ur4:
+    def __init__(self, id_, id_st, code, nazv, param):
+        self.id_ = id_
+        self.id_st = id_st
+        self.code = code
+        self.nazv = nazv
+        self.param = param
+
+class PPO:
+    def __init__(self, id_, id_obj, yr, mnt, dohod):
+        self.id_ = id_
+        self.id_obj = id_obj
+        self.yr = yr
+        self.mnt = mnt
+        self.dohod = dohod
+
 class Sql:
     def __init__(self, database="FM_model", server=r"NODE2\DBLMSSQLSRV", username="connect_FM_model", password=r"9*%dA6lU&T6)p2PX", driver="ODBC Driver 17 for SQL Server"):
         connectionString = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
@@ -717,6 +733,48 @@ class Sql:
             el = stati(data[i][0], data[i][1])
             datas.append(el)
         return datas
+    
+    def found_id_obj(self, nazv, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID FROM object_str WHERE nazv = " + nazv + " AND Id_p = " + str(id_p) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        return data[0]
+    
+    def found_obj_str_stati_(self, id_obj):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, Id_st_3 FROM obj_stati WHERE Id_obj = " + str(id_obj) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stati(data[i][0], data[i][1])
+            datas.append(el)
+        return datas
+    
+    def take_st_ur_4(self, id_st3):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM st_4_ur WHERE Id_st_3 = " + str(id_st3) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = st_ur4(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]), data[i][4])
+            datas.append(el)
+        return datas
+
+    def take_data_PPO(self, id_obj):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, Id_obj, yr, mnt, dohod FROM PPO_obj WHERE Id_obj = " + str(id_obj) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = PPO(data[i][0], data[i][1], data[i][2], del_probel(data[i][3]), data[i][4])
+            datas.append(el)
+        return datas
+
+    
 
 def make_arr_list(arr):
     arr2 = []
