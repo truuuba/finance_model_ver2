@@ -100,6 +100,12 @@ class PPO:
         self.mnt = mnt
         self.dohod = dohod
 
+class sost:
+    def __init__(self, id_, id_obj, nazv):
+        self.id_ = id_
+        self.id_obj = id_obj
+        self.nazv = nazv
+
 class Sql:
     def __init__(self, database="FM_model", server=r"NODE2\DBLMSSQLSRV", username="connect_FM_model", password=r"9*%dA6lU&T6)p2PX", driver="ODBC Driver 17 for SQL Server"):
         connectionString = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
@@ -774,7 +780,49 @@ class Sql:
             datas.append(el)
         return datas
 
+    def take_mnt_prodaj(self, id_):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT m_start_pr FROM object_str WHERE ID = " + str(id_) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        if data[0] == None:
+            return 0
+        else:
+            return del_probel(data[0])
+        
+    def take_yr_prodaj(self, id_):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT yr_start_pr FROM object_str WHERE ID = " + str(id_) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        if data[0] == None:
+            return 0
+        else:
+            return del_probel(data[0])
+        
+    def input_sost_obj(self, id_obj, nazv):
+        cursor = self.cnxn.cursor()
+        id_ = sql.create_id(name_t="sost_obj")
+        zapros = "INSERT INTO sost_obj (ID, Id_obj, nazv) VALUES (" + str(id_) + ", " + str(id_obj) + ", " + str(nazv) + ";"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+    def take_sost_obj(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT sost_obj.ID, sost_obj.Id_obj, sost_obj.nazv FROM sost_obj INNER JOIN object_str ON sost_obj.Id_obj = object_str.ID WHERE object_str.Id_p = " + str(id_p) + " ORDER BY sost_obj.Id_obj;"
+        data = cursor.fetchall(zapros)
+        datas = []
+        for i in range(len(data)):
+            el = sost(data[i][0], data[i][1], del_probel(data[i][2]))
+            datas.append(el)
+        return datas
     
+    def take_nazv_obj_str(self, id_):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT nazv FROM object_str WHERE ID = " + str(id_) + ";"
+        data = cursor.fetchall(zapros)
+        return del_probel(data[0])
 
 def make_arr_list(arr):
     arr2 = []
