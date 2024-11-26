@@ -24,6 +24,8 @@ def make_shapka(yr, mnt, prod):
             yr += 1
     return arr
 
+def change_shapka(shapka,):
+
 def create_tabel_bdr(id_pr):
     #Берем данные по названию проекта
     n_t = sql.take_name_pr(id_pr)
@@ -43,8 +45,10 @@ def create_tabel_bdr(id_pr):
     #Ищем максимальную шапку
     max_shapka = []
     for el in object_str:
-        m_start_pr = 
-        yr_start_pr =
+        m_start_pr = sql.take_mnt_prodaj(el.id_)
+        yr_start_pr = sql.take_yr_prodaj(el.id_)
+        if not(m_start_pr == 0 or yr_start_pr == 0):
+
 
     '''
     Вытаскиваем общие статьи 1,2,3,5
