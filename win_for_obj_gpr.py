@@ -1,4 +1,4 @@
-from win_choice_table import *
+from win_create_sost_obj import *
 
 class GPR_obj(CTk.CTkScrollableFrame):
     def __init__(self, master, objects, prod, zav, indexes, st_objects):
@@ -97,7 +97,7 @@ class win_for_obj_gpr(CTk.CTk):
                 for j in range(len(arr_zav[i])):
                     sql.input_gpr_obj(id_st_obj=self.st_objects[i][j].id_, zavisim=arr_zav[i][j], prod=arr_prod[i][j], ind=self.indexes[i][j])
             self.withdraw()
-            a = choice_table(self.id_p)
+            a = win_create_sost_obj(self.id_p)
             a.mainloop()
         else:
             mb.showerror('Ошибка!', 'Некорректно записаны данные')
