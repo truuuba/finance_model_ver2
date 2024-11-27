@@ -24,7 +24,17 @@ def make_shapka(yr, mnt, prod):
             yr += 1
     return arr
 
-def change_shapka(shapka,):
+def change_shapka(shapka, m_start_pr, yr_start_pr, prod):
+    res_shapka = []
+    temp = m_start_pr + " " + str(yr_start_pr)
+    prov = False
+    for i in range(len(shapka)):
+        if shapka[i] == temp:
+            prov = True
+            break
+        else:
+            res_shapka.append(shapka[i])
+    if not prov:
 
 def create_tabel_bdr(id_pr):
     #Берем данные по названию проекта
@@ -39,16 +49,21 @@ def create_tabel_bdr(id_pr):
     object_str = sql.take_obj_str(id_p=id_pr)
 
     #Информация по продолжительности от ГПР
-    shapka = make_shapka(yr=yr_start, mnt=mnt_start, prod=prod)
     prod = sql.take_prod_proj(id_pr)
+    shapka = make_shapka(yr=yr_start, mnt=mnt_start, prod=prod)
 
     #Ищем максимальную шапку
     max_shapka = []
     for el in object_str:
+        shapka_obj = []
         m_start_pr = sql.take_mnt_prodaj(el.id_)
         yr_start_pr = sql.take_yr_prodaj(el.id_)
         if not(m_start_pr == 0 or yr_start_pr == 0):
-
+            shapka_obj = change_shapka(shapka, m_start_pr, yr_start_pr, el.prod)
+        if len(shapka_obj) > len(max_shapka):
+            max_shapka = shapka_obj
+    shapka = max_shapka
+    prod = len(max_shapka) - 1
 
     '''
     Вытаскиваем общие статьи 1,2,3,5
@@ -265,7 +280,7 @@ def create_tabel_bdr(id_pr):
         arr.append(0)
     #Выделяем доходы по каждому объекту строительства
     for el in object_str:
-        #сначала разобраться с шапкой
+        #Сначала разобраться с шапкой
     
 
     
