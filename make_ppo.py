@@ -13,6 +13,9 @@ class season_k:
         self.koef = koef
 
 def create_tabel_ppo(id_pr, prov_create):
+    '''
+    Жилые
+    '''
     #Берем данные по названию проекта
     n_t = sql.take_name_pr(id_pr)
     name_table = translit(n_t, language_code='ru', reversed=True)
@@ -29,8 +32,20 @@ def create_tabel_ppo(id_pr, prov_create):
 
     arr_ppo = []
     for i in range(len(obj_str)):
-        arr_ppo.append(cout_ppo(obj_str[i].prod_pl, obj_str[i].stoim, obj_str[i].prod, obj_str[i].m_st, obj_str[i].kv_cnt, obj_str[i].yr_st, obj_str[i].d_ip, obj_str[i].d_rassr, obj_str[i].d_full, obj_str[i].vsnos_r, obj_str[i].sr_pl_rassr, id_obj=obj_str[i].id_))
-        sht_name.append(obj_str[i].nazv)
+        arr_ppo.append(cout_ppo(obj_str[i].prod_pl, obj_str[i].stoim, obj_str[i].prod, obj_str[i].m_st, obj_str[i].kv_cnt, obj_str[i].yr_st, obj_str[i].d_ip, obj_str[i].d_rassr, obj_str[i].d_full, obj_str[i].vsnos_r, obj_str[i].sr_pl_rassr, id_obj=obj_str[i].id_, prov_table=True))
+        sht_name.append("Квартиры " + obj_str[i].nazv)
+
+    '''
+    Коммерческие помещения
+    '''
+    patt = r".*Коммерческие помещения.*"
+    for i in range(len(obj_str)):
+        sost_obj = sql.take_sost_obj_ppo(obj_str[i].id_)
+        for el in sost_obj:
+            match_sost = re.match(patt, el.nazv)
+            if match_sost:
+                arr_ppo.append(el.prod_pl, el.stoim, obj_str[i].prod, obj_str[i].m_st, el.cnt, obj_str[i].yr_st, el.dol_ip, el.dol_rass, el.full_pl, el.vsn_r, el.sr_pl_rassr, el.id_obj, False)
+                sht_name.append("Коммерческие помещения " + obj_str[i].nazv)
 
     if prov_create:
         filepath = create_empty_excel(filename=('ppo_' + name_table + '.xlsx'), data=arr_ppo, sheet_name = sht_name)
@@ -86,7 +101,7 @@ def create_empty_excel(data: list, filename: str, sheet_name):
     return filepath
 
 # Считаем ППО
-def cout_ppo(ploshad, st_m, prod, mounth_start, cnt_kv, year, _pr_ipot, _pr_rassr, _pr_full, _pr_rassr_vznos, sr_plat_rassr, id_obj):
+def cout_ppo(ploshad, st_m, prod, mounth_start, cnt_kv, year, _pr_ipot, _pr_rassr, _pr_full, _pr_rassr_vznos, sr_plat_rassr, id_obj, prov_table):
     # Проценты
     pr_ipot = _pr_ipot/100
     pr_rassr = _pr_rassr/100
@@ -266,10 +281,16 @@ def cout_ppo(ploshad, st_m, prod, mounth_start, cnt_kv, year, _pr_ipot, _pr_rass
     t_ppo.append(shapka_koefs)
 
     # Добавляем данные в ППО
-    len_ = len(ppo)
-    sql.prov_PPO(id_obj=id_obj)
-    for i in range(1, len(ppo[len_-1])):
-        sql.input_ppo(id_obj=id_obj, yr=shapka_yr[i], mnt=shapka_mnt[i], dohod=ppo[len_-1][i])
+    if prov_table:
+        len_ = len(ppo)
+        sql.prov_PPO(id_obj=id_obj)
+        for i in range(1, len(ppo[len_-1])):
+            sql.input_ppo(id_obj=id_obj, yr=shapka_yr[i], mnt=shapka_mnt[i], dohod=ppo[len_-1][i])
+    else:
+        len_ = len(ppo)
+        sql.prov_s_PPO(id_obj)
+        for i in range(1, len(ppo[len_-1])):
+            sql.input_ppo_sost(id_s_obj=id_obj, yr=shapka_yr[i], mnt=shapka_mnt[i], dohod=ppo[len_-1][i])
 
     arr = []
     arr.append('ДДУ') # Считаем ДДУ
