@@ -8,8 +8,17 @@ class sostav:
         self.stoim = stoim
 
 class kommer:
-    def __init__(self):
-        
+    def __init__(self, id_, id_obj, prod_pl, stoim_kv, cnt_kvart, sr_pl_r, dol_ipoteka, dol_rassr_pl, d_full_oplata, p_vs_r):
+        self.id_ = id_
+        self.id_obj = id_obj
+        self.prod_pl = prod_pl
+        self.stoim_kv = stoim_kv
+        self.cnt_kvart = cnt_kvart
+        self.sr_pl_r = sr_pl_r
+        self.dol_ipoteka = dol_ipoteka
+        self.dol_rassr_pl = dol_rassr_pl
+        self.d_full_oplata = d_full_oplata
+        self.p_vs_r = p_vs_r        
 
 class win_input_sost(CTk.CTkScrollableFrame):
     def __init__(self, master, arr_sost_obj, arr_mashinomest, arr_kladov, arr_komm):
@@ -92,6 +101,8 @@ class win_input_sost(CTk.CTkScrollableFrame):
                 self.p_vs_r = CTk.CTkEntry(master=self)
                 self.p_vs_r.grid(row=cnt, column=2, padx=(5,5), pady=(0,0))
                 cnt += 1
+                el = kommer(el.id_, el.id_obj, self.pr_pl, self.stoim, self.cnt_kv, self.sr_pl_r, self.d_ip, self.d_rass_pl, self.d_f_opl, self.p_vs_r)
+                arr_komm.append(el)
 
 class win_sost_obj_ppo(CTk.CTk):
     def __init__(self, id_p):
@@ -119,6 +130,42 @@ class win_sost_obj_ppo(CTk.CTk):
         sys.exit(0)
 
     def open_next_win(self):
-        self.withdraw()
-        a = choice_table(self.id_p)
-        a.mainloop()
+        prov = True
+        patt = r'^[0-9]*$'
+        #Проверяем машиноместа
+        for el in self.arr_mashinomest:
+            match_cnt = re.match(patt, el.cnt.get())
+            match_stoim = re.match(patt, el.stoim.get())
+            if not(match_cnt and match_stoim):
+                prov = False
+        #Проверяем кладовые
+        for el in self.arr_kladov:
+            match_cnt = re.match(patt, el.cnt.get())
+            match_stoim = re.match(patt, el.stoim.get())
+            if not(match_cnt and match_stoim):
+                prov = False
+        #Проверяем коммерческие помещения
+        for el in self.arr_komm:
+            match_pr_pl = re.match(patt, el.prod_pl.get())
+            match_stoim = re.match(patt, el.stoim.get())
+            match_cnt_kv = re.match(patt, el.cnt_kvart.get())
+            match_sr_pl_r = re.match(patt, el.sr_pl.get())
+            match_dol_ipoteka = re.match(patt, el.dol_ipoteka.get())
+            match_dol_rassr_pl = re.match(patt, el.dol_rassr_pl.get()) 
+            match_d_full_oplata = re.match(patt, el.d_full_oplata.get())
+            match_p_vs_r = re.match(patt, el.p_vs_r.get())
+            if not(match_pr_pl and match_stoim and match_cnt_kv and match_sr_pl_r and match_dol_ipoteka and match_dol_rassr_pl and match_d_full_oplata and match_p_vs_r):
+                prov = False
+        #Добавляем данные в состаявляющие строительства
+        if prov:
+            for el in self.arr_mashinomest:
+                sql.input_sost_obj_m_k(id_=el.id_, cnt=el.cnt.get(), stoim=el.stoim.get())
+            for el in self.arr_kladov:
+                sql.input_sost_obj_m_k(id_=el.id_, cnt=el.cnt.get(), stoim=el.stoim.get())
+            for el in self.arr_komm:
+                sql.input_sost_komm_pom(id_=el.id_, cnt=el.cnt_kvart.get(), stoim=el.stoim_kv.get(), prod_pl=el.prod_pl.get(), sr_pl_rassr=el.sr_pl_r.get(), dol_ip=el.dol_ipoteka.get(), dol_rass=el.dol_rassr_pl.get(), full_pl=el.d_full_oplata.get(), vsn_r=el.p_vs_r.get())
+            self.withdraw()
+            a = choice_table(self.id_p)
+            a.mainloop()
+        else:
+            mb.showerror("Ошибка!", "Введены неверные данные")
