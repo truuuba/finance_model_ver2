@@ -106,6 +106,20 @@ class sost:
         self.id_obj = id_obj
         self.nazv = nazv
 
+class sost_ppo:
+    def __init__(self, id_, id_obj, nazv, cnt, stoim, prod_pl, sr_pl_rassr, dol_ip, dol_rass, full_pl, vsn_r):
+        self.id_ = id_
+        self.id_obj = id_obj
+        self.nazv = nazv
+        self.cnt = cnt
+        self.stoim = stoim
+        self.prod_pl = prod_pl
+        self.sr_pl_rassr = sr_pl_rassr
+        self.dol_ip = dol_ip
+        self.dol_rass = dol_rass
+        self.full_pl = full_pl
+        self.vsn_r = vsn_r
+
 class Sql:
     def __init__(self, database="FM_model", server=r"NODE2\DBLMSSQLSRV", username="connect_FM_model", password=r"9*%dA6lU&T6)p2PX", driver="ODBC Driver 17 for SQL Server"):
         connectionString = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
@@ -823,6 +837,50 @@ class Sql:
         zapros = "SELECT nazv FROM object_str WHERE ID = " + str(id_) + ";"
         data = cursor.fetchall(zapros)
         return del_probel(data[0])
+    
+    def input_sost_obj_m_k(self, id_, cnt, stoim):
+        cursor = self.cnxn.cursor()
+        zapros = "UPDATE sost_obj SET cnt = " + str(cnt) + ", stoim = " + str(stoim) + " WHERE ID = " + str(id_) + ";"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+    def input_sost_komm_pom(self, id_, cnt, stoim, prod_pl, sr_pl_rassr, dol_ip, dol_rass, full_pl, vsn_r):
+        cursor = self.cnxn.cursor()
+        zapros = "UPDATE sost_obj SET cnt = " + str(cnt) + ", stoim = " + str(stoim) + ", prod_pl = " + str(prod_pl) + ", sr_pl_rassr = " + str(sr_pl_rassr) + ", dol_ipoteka = " + str(dol_ip) + ", dol_rassr = " + str(dol_rass) + ", dol_full_pl = " + str(full_pl) + ", vsnos_rassr = " + str(vsn_r) + " WHERE ID = " + str(id_) + ";"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+    def take_sost_obj_ppo(self, id_):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM sost_obj WHERE Id_obj = " + str(id_) + ";"
+        data = cursor.fetchall(zapros)
+        datas = []
+        for i in range(len(data)):
+            el = sost_ppo(data[i][0], data[i][1], del_probel(data[i][2]), data[i][3], data[i][4], data[i][5], data[i][6], data[i][7], data[i][8], data[i][9], data[i][10])
+            datas.append(el)
+        return datas
+    
+    def prov_s_PPO(self, id_s_obj):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM PPO_sost_obj WHERE Id_s_obj = " + str(id_s_obj) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        if len(data) != 0:
+            cursor = self.cnxn.cursor()
+            zapros = "DELETE FROM PPO_sost_obj WHERE Id_s_obj = "  + str(id_s_obj) + ";"
+            cursor.execute(zapros)
+            self.cnxn.commit()
+            cursor.close()
+
+    def input_ppo_sost(self, id_s_obj, yr, mnt, dohod):
+        cursor = self.cnxn.cursor()
+        id_ = self.create_id("PPO_sost_obj")
+        zapros = "INSERT INTO PPO_sost_obj (ID, Id_s_obj, yr, mnt, dohod) VALUES (" + str(id_) + "," + str(id_s_obj) + "," + str(yr) + ", '" + str(mnt) + "', " + str(dohod) + ");"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
 
 def make_arr_list(arr):
     arr2 = []
