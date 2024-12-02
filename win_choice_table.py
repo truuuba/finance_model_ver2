@@ -3,6 +3,7 @@ from make_gpr import *
 from make_ppo import *
 from win_bdr import *
 from win_bdds import *
+from win_fin_org import *
 import sys
 
 class choice_table(CTk.CTk):
@@ -39,28 +40,34 @@ class choice_table(CTk.CTk):
         self.bdds_ex = CTk.CTkButton(master=self, text="Создать таблицу БДДС в Excel", command=self.open_win_bdds)
         self.bdds_ex.grid(row=7, column=0, padx=(5,5), pady=(5,5))
 
+        #Добавление финансовых организаций
+        self.fin_organisation = CTk.CTkLabel(master=self, text="Финансовые организации")
+        self.fin_organisation.grid(row=8, column=0, padx=(5,5), pady=(5,5))
+        self.fin_org = CTk.CTkButton(master=self, text="Открытие фин.организаций")
+        self.fin_org.grid(row=9, column=0, padx=(5,5), pady=(5,5))
+
         #Изменения в конкретных таблицах
         self.changer = CTk.CTkLabel(master=self, text="Добавить изменения в таблицу")
-        self.changer.grid(row=8, column=0, padx=(5,5), pady=(15,5))
+        self.changer.grid(row=10, column=0, padx=(5,5), pady=(15,5))
         self.changer_check_box = CTk.CTkComboBox(master=self, values=["ГПР", "ППО", "БДДС"])
-        self.changer_check_box.grid(row=9, column=0, padx=(5,5), pady=(5,5))
+        self.changer_check_box.grid(row=11, column=0, padx=(5,5), pady=(5,5))
         self.changer_but = CTk.CTkButton(master=self, text="Изменить")
-        self.changer_but.grid(row=10, column=0, padx=(5,5), pady=(5,5))
+        self.changer_but.grid(row=12, column=0, padx=(5,5), pady=(5,5))
 
         #Изменения в статьях
         self.ch_st = CTk.CTkLabel(master=self, text="Изменить статьи доходов и расходов")
-        self.ch_st.grid(row=11, column=0, padx=(5,5), pady=(5,5))
+        self.ch_st.grid(row=13, column=0, padx=(5,5), pady=(5,5))
         self.change_stat = CTk.CTkButton(master=self, text="Изменить")
-        self.change_stat.grid(row=12, column=0, padx=(5,5), pady=(5,5))
+        self.change_stat.grid(row=14, column=0, padx=(5,5), pady=(5,5))
 
         #Изменить даты начала работ
         self.time_work = CTk.CTkLabel(master=self, text="Изменить даты продаж и строительства")
-        self.time_work.grid(row=13, column=0, padx=(5,5), pady=(5,5))
+        self.time_work.grid(row=15, column=0, padx=(5,5), pady=(5,5))
         self.ch_t = CTk.CTkButton(master=self, text="Изменить")
-        self.ch_t.grid(row=14, column=0, padx=(5,5), pady=(5,5))
+        self.ch_t.grid(row=16, column=0, padx=(5,5), pady=(5,5))
 
         self.poyasn_t = CTk.CTkLabel(master=self, text="При изменении файла закрывайте его в Excel!", text_color='#EB5E28')
-        self.poyasn_t.grid(row=15, column=0, padx=(5,5), pady=(5,5))
+        self.poyasn_t.grid(row=17, column=0, padx=(5,5), pady=(5,5))
 
     def _done(self):
         self.destroy()
@@ -84,4 +91,8 @@ class choice_table(CTk.CTk):
 
     def open_win_bdds(self):
         a = win_bdds(self.id_p)
+        a.mainloop()
+
+    def fin_org(self):
+        a = win_fin_org(self.id_p)
         a.mainloop()
