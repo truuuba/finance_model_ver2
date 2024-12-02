@@ -1,7 +1,8 @@
 import customtkinter as CTk
 import re
 from tkinter import messagebox as mb
-from make_bdr import *
+#from make_bdr import * 
+from connect_db import sql
 
 CTk.set_appearance_mode("dark")
 CTk.set_default_color_theme("green")
