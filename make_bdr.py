@@ -2,6 +2,7 @@ from connect_db import sql
 from transliterate import translit
 import os
 import pandas as pd
+import re
 
 def changer_mnt(mnt):
     ind_i = 0
@@ -28,13 +29,33 @@ def change_shapka(shapka, m_start_pr, yr_start_pr, prod):
     res_shapka = []
     temp = m_start_pr + " " + str(yr_start_pr)
     prov = False
+    #Длина шапки до момента старта продаж
     for i in range(len(shapka)):
         if shapka[i] == temp:
             prov = True
             break
         else:
             res_shapka.append(shapka[i])
+    #Увеличиваем продолжительность до старта продаж
+    a = res_shapka[len(res_shapka)-1].split()
+    mnt = a[0]
+    yr = int(a[1])
     if not prov:
+        while True:
+            mnt = changer_mnt(mnt)
+            if mnt == 'Декабрь':
+                yr += 1
+            temp2 = mnt + " " + str(yr)
+            res_shapka.append(temp2)
+            if temp == temp2:
+                break
+    #Доделываем шапку по продолжительности продаж
+    for i in range(prod-1):
+        res_shapka.append(mnt + " " + str(yr))
+        mnt = changer_mnt(mnt)
+        if mnt == 'Декабрь':
+            yr += 1
+    return res_shapka
 
 def create_tabel_bdr(id_pr):
     #Берем данные по названию проекта
@@ -46,14 +67,14 @@ def create_tabel_bdr(id_pr):
     yr_start = sql.take_yr_start(id_pr)
 
     #Вытаскиваем объекты строительства
-    object_str = sql.take_obj_str(id_p=id_pr)
+    object_str = sql.take_obj_for_ppo(id_pr)
 
     #Информация по продолжительности от ГПР
     prod = sql.take_prod_proj(id_pr)
     shapka = make_shapka(yr=yr_start, mnt=mnt_start, prod=prod)
 
     #Ищем максимальную шапку
-    max_shapka = []
+    max_shapka = shapka
     for el in object_str:
         shapka_obj = []
         m_start_pr = sql.take_mnt_prodaj(el.id_)
@@ -215,8 +236,8 @@ def create_tabel_bdr(id_pr):
                                                 temp = element.mnt + " " + str(element.yr)
                                                 #Проверка по времени расходов
                                                 if time == temp:
-                                                    elem_st3[j] = float(element.plan_ds)
-                                                    elem_st2[j] += float(element.plan_ds)
+                                                    elem_st3[j] = round(float(element.plan_ds), 2)
+                                                    elem_st2[j] += round(float(element.plan_ds), 2)
                         Arr_elems_3.append(elem_st3) #Данные по 2 конкретной статье                            
             arr_elems_2.append(elem_st2) #Массив 2 статей
             arr_elems_3.append(Arr_elems_3) #Массив 3 статей внутри вторых
@@ -225,6 +246,62 @@ def create_tabel_bdr(id_pr):
             bdr_res.append(arr_elems_2[i])
             for j in range(len(arr_elems_3[i])):
                 bdr_res.append(arr_elems_3[i][j])
+
+    #Начинаем считать поступления
+    arr = ['Поступления']
+    for i in range(prod):
+        arr.append(0)
+    bdr_res.append(arr)
+    pattern = r".*Корпус.*"
+    #Выделяем доходы по каждому объекту строительства
+    for el in object_str:
+        match_obj = re.match(pattern, el.nazv)
+        if match_obj:
+            arr_nazv = [el.nazv]
+            #Название объекта
+            for i in range(prod):
+                arr_nazv.append(0)
+            #Разбираемся с жилыми
+            mass_PPO_obj = sql.take_data_PPO(el.id_) 
+            arr_jil = [el.nazv + ' Квартиры']
+            for i in range(prod):
+                arr_jil.append(0)
+            for elem in mass_PPO_obj:
+                temp = elem.mnt + " " + str(elem.yr)
+                for i in range(1, len(shapka)): 
+                    if temp == shapka[i]:
+                        arr_nazv[i] += round(float(elem.dohod), 2)
+                        arr_jil[i] += round(float(elem.dohod), 2)
+            #Смотрим составляющие
+            patt = r".*Коммерческие помещения.*"
+            arr_s_obj = sql.take_sost_obj_ppo(el.id_)
+            arrs_sost_obj = []
+            for elem in arr_s_obj:
+                arr_kom = [el.nazv + " " + elem.nazv]
+                for i in range(prod):
+                    arr_kom.append(0)
+                match_sost_obj = re.match(patt, elem.nazv)
+                #Если коммерческие помещения
+                if match_sost_obj:
+                    arr_s_PPO = sql.take_PPO_sost(elem.id_)
+                    for element in arr_s_PPO:
+                        temp = element.mnt + " " + str(element.yr)
+                        for i in range(len(shapka)):
+                            if temp == shapka[i]:
+                                arr_kom[i] += round(float(element.dohod), 2)
+                                arr_nazv[i] += round(float(element.dohod), 2)
+                #Если машиноместа или кладовые помещения
+                else:
+                    sum_sost = elem.cnt * elem.stoim
+                    a = float(sum_sost)/prod
+                    for i in range(1, len(shapka)):
+                        arr_kom[i] += round(a, 2)
+                        arr_nazv[i] += round(a, 2)
+                arrs_sost_obj.append(arr_kom)
+            bdr_res.append(arr_nazv)
+            bdr_res.append(arr_jil)
+            for i in range(len(arrs_sost_obj)):
+                bdr_res.append(arrs_sost_obj[i])
 
     '''
     Разбираем исключения в общих статьях
@@ -274,19 +351,10 @@ def create_tabel_bdr(id_pr):
                 for j in range(len(arr_elems_3[i])):
                     bdr_res.append(arr_elems_3[i][j])
 
-    #Начинаем считать поступления
-    arr = ['Поступления']
-    for i in range(prod):
-        arr.append(0)
-    #Выделяем доходы по каждому объекту строительства
-    for el in object_str:
-        #Сначала разобраться с шапкой
-    
+    for i in range(len(bdr_res)):
+        print(bdr_res[i])
 
-    
-
-
-create_tabel_bdr(4)
+create_tabel_bdr(17)
 
 #https://coolors.co/582f0e-7f4f24-936639-a68a64-b6ad90-c2c5aa-a4ac86-656d4a-414833-333d29
 #https://coolors.co/cad2c5-84a98c-52796f-354f52-2f3e46
