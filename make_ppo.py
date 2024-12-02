@@ -44,8 +44,8 @@ def create_tabel_ppo(id_pr, prov_create):
         for el in sost_obj:
             match_sost = re.match(patt, el.nazv)
             if match_sost:
-                arr_ppo.append(el.prod_pl, el.stoim, obj_str[i].prod, obj_str[i].m_st, el.cnt, obj_str[i].yr_st, el.dol_ip, el.dol_rass, el.full_pl, el.vsn_r, el.sr_pl_rassr, el.id_obj, False)
-                sht_name.append("Коммерческие помещения " + obj_str[i].nazv)
+                arr_ppo.append(cout_ppo(el.prod_pl, el.stoim, obj_str[i].prod, obj_str[i].m_st, el.cnt, obj_str[i].yr_st, el.dol_ip, el.dol_rass, el.full_pl, el.vsn_r, el.sr_pl_rassr, el.id_, False))
+                sht_name.append("Комм. помещения " + obj_str[i].nazv)
 
     if prov_create:
         filepath = create_empty_excel(filename=('ppo_' + name_table + '.xlsx'), data=arr_ppo, sheet_name = sht_name)
