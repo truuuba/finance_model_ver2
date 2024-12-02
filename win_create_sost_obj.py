@@ -8,7 +8,7 @@ class sost:
 
 class win_sost_obj(CTk.CTkScrollableFrame):
     def __init__(self, master, arr_object, sostavl):
-        super().__init__(master, width=1000, height=650)
+        super().__init__(master, width=1000, height=550)
         cnt = 0
         for i in range(len(arr_object)):
             #Шапка
