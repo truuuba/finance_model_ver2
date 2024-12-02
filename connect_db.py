@@ -799,25 +799,25 @@ class Sql:
         zapros = "SELECT m_start_pr FROM object_str WHERE ID = " + str(id_) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
-        if data[0] == None:
+        if data[0][0] == None:
             return 0
         else:
-            return del_probel(data[0])
+            return del_probel(data[0][0])
         
     def take_yr_prodaj(self, id_):
         cursor = self.cnxn.cursor()
         zapros = "SELECT yr_start_pr FROM object_str WHERE ID = " + str(id_) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
-        if data[0] == None:
+        if data[0][0] == None:
             return 0
         else:
-            return del_probel(data[0])
+            return data[0][0]
         
     def input_sost_obj(self, id_obj, nazv):
         cursor = self.cnxn.cursor()
         id_ = sql.create_id(name_t="sost_obj")
-        zapros = "INSERT INTO sost_obj (ID, Id_obj, nazv) VALUES (" + str(id_) + ", " + str(id_obj) + ", " + str(nazv) + ";"
+        zapros = "INSERT INTO sost_obj (ID, Id_obj, nazv) VALUES (" + str(id_) + ", " + str(id_obj) + ", '" + str(nazv) + "');"
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
@@ -825,7 +825,8 @@ class Sql:
     def take_sost_obj(self, id_p):
         cursor = self.cnxn.cursor()
         zapros = "SELECT sost_obj.ID, sost_obj.Id_obj, sost_obj.nazv FROM sost_obj INNER JOIN object_str ON sost_obj.Id_obj = object_str.ID WHERE object_str.Id_p = " + str(id_p) + " ORDER BY sost_obj.Id_obj;"
-        data = cursor.fetchall(zapros)
+        cursor.execute(zapros)
+        data = cursor.fetchall()
         datas = []
         for i in range(len(data)):
             el = sost(data[i][0], data[i][1], del_probel(data[i][2]))
@@ -835,8 +836,9 @@ class Sql:
     def take_nazv_obj_str(self, id_):
         cursor = self.cnxn.cursor()
         zapros = "SELECT nazv FROM object_str WHERE ID = " + str(id_) + ";"
-        data = cursor.fetchall(zapros)
-        return del_probel(data[0])
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        return del_probel(data[0][0])
     
     def input_sost_obj_m_k(self, id_, cnt, stoim):
         cursor = self.cnxn.cursor()
@@ -855,7 +857,8 @@ class Sql:
     def take_sost_obj_ppo(self, id_):
         cursor = self.cnxn.cursor()
         zapros = "SELECT * FROM sost_obj WHERE Id_obj = " + str(id_) + ";"
-        data = cursor.fetchall(zapros)
+        cursor.execute(zapros)
+        data = cursor.fetchall()
         datas = []
         for i in range(len(data)):
             el = sost_ppo(data[i][0], data[i][1], del_probel(data[i][2]), data[i][3], data[i][4], data[i][5], data[i][6], data[i][7], data[i][8], data[i][9], data[i][10])
@@ -881,6 +884,17 @@ class Sql:
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
+
+    def take_PPO_sost(self, id_s_obj):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, Id_s_obj, yr, mnt, dohod FROM PPO_sost_obj WHERE Id_s_obj = " + str(id_s_obj) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = PPO(data[i][0], data[i][1], data[i][2], del_probel(data[i][3]), data[i][4])
+            datas.append(el)
+        return datas
 
 def make_arr_list(arr):
     arr2 = []
