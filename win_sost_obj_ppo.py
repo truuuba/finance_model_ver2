@@ -22,7 +22,7 @@ class kommer:
 
 class win_input_sost(CTk.CTkScrollableFrame):
     def __init__(self, master, arr_sost_obj, arr_mashinomest, arr_kladov, arr_komm):
-        super().__init__(master, width=1000, height=650)
+        super().__init__(master, width=1000, height=550)
         cnt = 0
         patt_m = r".*Машиноместа.*"
         patt_klad = r".*Кладовые помещения.*"
@@ -62,44 +62,44 @@ class win_input_sost(CTk.CTkScrollableFrame):
             #Коммерческие помещения
             else:
                 self.prod_pl = CTk.CTkLabel(master=self, text="Продаваемая площадь, в кв/м")
-                self.prod_pl.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
+                self.prod_pl.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
                 self.pr_pl = CTk.CTkEntry(master=self)
-                self.pr_pl.grid(row=cnt, column=2, padx=(5,5), pady=(0,0))
+                self.pr_pl.grid(row=cnt, column=2, padx=(5,5), pady=(5,5))
                 cnt += 1
                 self.stoim_kv_m = CTk.CTkLabel(master=self, text="Цена за квадратный метр, в рублях")
-                self.stoim_kv_m.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
+                self.stoim_kv_m.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
                 self.stoim = CTk.CTkEntry(master=self)
-                self.stoim.grid(row=cnt, column=2, padx=(5,5), pady=(0,0))
+                self.stoim.grid(row=cnt, column=2, padx=(5,5), pady=(5,5))
                 cnt += 1
-                self.cnt_kvart = CTk.CTkLabel(master=self, text="Количество квартир")
-                self.cnt_kvart.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
+                self.cnt_kvart = CTk.CTkLabel(master=self, text="Количество помещений")
+                self.cnt_kvart.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
                 self.cnt_kv = CTk.CTkEntry(master=self)
-                self.cnt_kv.grid(row=cnt, column=2, padx=(5,5), pady=(0,0))
+                self.cnt_kv.grid(row=cnt, column=2, padx=(5,5), pady=(5,5))
                 cnt += 1
                 self.sr_platej_rassr = CTk.CTkLabel(master=self, text="Средний ежемесячный платеж по рассрочке (в тысячах рублях)")
-                self.sr_platej_rassr.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
+                self.sr_platej_rassr.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
                 self.sr_pl_r = CTk.CTkEntry(master=self)
-                self.sr_pl_r.grid(row=cnt, column=2, padx=(5,5), pady=(0,0))
+                self.sr_pl_r.grid(row=cnt, column=2, padx=(5,5), pady=(5,5))
                 cnt += 1
                 self.dol_ipoteka = CTk.CTkLabel(master=self, text="Доля договоров по ипотеке (в процентах)")
-                self.dol_ipoteka.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
+                self.dol_ipoteka.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
                 self.d_ip = CTk.CTkEntry(master=self)
-                self.d_ip.grid(row=cnt, column=2, padx=(5,5), pady=(0,0))
+                self.d_ip.grid(row=cnt, column=2, padx=(5,5), pady=(5,5))
                 cnt += 1
                 self.dol_rassr_pl = CTk.CTkLabel(master=self, text="Доля договоров с рассрочкой платежа (в процентах)")
-                self.dol_rassr_pl.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
+                self.dol_rassr_pl.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
                 self.d_rass_pl = CTk.CTkEntry(master=self)
-                self.d_rass_pl.grid(row=cnt, column=2, padx=(5,5), pady=(0,0))
+                self.d_rass_pl.grid(row=cnt, column=2, padx=(5,5), pady=(5,5))
                 cnt += 1
                 self.d_full_oplata = CTk.CTkLabel(master=self, text="Доля договоров по полной предоплате (в процентах)")
-                self.d_full_oplata.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
+                self.d_full_oplata.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
                 self.d_f_opl = CTk.CTkEntry(master=self)
-                self.d_f_opl.grid(row=cnt, column=2, padx=(5,5), pady=(0,0))
+                self.d_f_opl.grid(row=cnt, column=2, padx=(5,5), pady=(5,5))
                 cnt += 1
                 self.perv_vsnos_rassr = CTk.CTkLabel(master=self, text="Первоначальный взнос по рассрочке (в процентах)")
-                self.perv_vsnos_rassr.grid(row=cnt, column=0, padx=(5,5), pady=(0,0))
+                self.perv_vsnos_rassr.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
                 self.p_vs_r = CTk.CTkEntry(master=self)
-                self.p_vs_r.grid(row=cnt, column=2, padx=(5,5), pady=(0,0))
+                self.p_vs_r.grid(row=cnt, column=2, padx=(5,5), pady=(5,5))
                 cnt += 1
                 el = kommer(el.id_, el.id_obj, self.pr_pl, self.stoim, self.cnt_kv, self.sr_pl_r, self.d_ip, self.d_rass_pl, self.d_f_opl, self.p_vs_r)
                 arr_komm.append(el)
@@ -119,9 +119,9 @@ class win_sost_obj_ppo(CTk.CTk):
 
         self.ttle = CTk.CTkLabel(master=self, text="Введите данные по составляющим корпусов")
         self.ttle.grid(row=0, column=0, padx=(5,5), pady=(5,5))
-        self.win_input_sost = win_input_sost(self, self.arr_mashinomest,  self.arr_kladov, self.arr_komm)
+        self.win_input_sost = win_input_sost(self, self.arr_sost_obj, self.arr_mashinomest,  self.arr_kladov, self.arr_komm)
         self.win_input_sost.grid(row=1, column=0, padx=(5,5), pady=(5,5))
-        self.next_win = CTk.CTkButton(master=self, text="Данные введены", command=self.next_win)
+        self.next_win = CTk.CTkButton(master=self, text="Данные введены", command=self.open_next_win)
         self.next_win.grid(row=2, column=0, padx=(5,5), pady=(5,5))
 
     def _done(self):
@@ -147,9 +147,9 @@ class win_sost_obj_ppo(CTk.CTk):
         #Проверяем коммерческие помещения
         for el in self.arr_komm:
             match_pr_pl = re.match(patt, el.prod_pl.get())
-            match_stoim = re.match(patt, el.stoim.get())
+            match_stoim = re.match(patt, el.stoim_kv.get())
             match_cnt_kv = re.match(patt, el.cnt_kvart.get())
-            match_sr_pl_r = re.match(patt, el.sr_pl.get())
+            match_sr_pl_r = re.match(patt, el.sr_pl_r.get())
             match_dol_ipoteka = re.match(patt, el.dol_ipoteka.get())
             match_dol_rassr_pl = re.match(patt, el.dol_rassr_pl.get()) 
             match_d_full_oplata = re.match(patt, el.d_full_oplata.get())
