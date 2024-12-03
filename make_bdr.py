@@ -292,9 +292,17 @@ def create_tabel_bdr(id_pr):
                                 arr_nazv[i] += round(float(element.dohod), 2)
                 #Если машиноместа или кладовые помещения
                 else:
-                    sum_sost = elem.cnt * elem.stoim
-                    a = float(sum_sost)/prod
+                    #Начинаем красиво искать момент, с которого начинаются продажи
+                    st = 0
+                    temp = el.m_st + " " + str(el.yr_st)
                     for i in range(1, len(shapka)):
+                        if temp == shapka[i]:
+                            st = i
+                            break
+                    #Полноценно начинаем заниматься вводом данных
+                    sum_sost = elem.cnt * elem.stoim
+                    a = float(sum_sost)/(prod - st)
+                    for i in range(st, len(shapka)):
                         arr_kom[i] += round(a, 2)
                         arr_nazv[i] += round(a, 2)
                 arrs_sost_obj.append(arr_kom)
@@ -351,8 +359,36 @@ def create_tabel_bdr(id_pr):
                 for j in range(len(arr_elems_3[i])):
                     bdr_res.append(arr_elems_3[i][j])
 
-    for i in range(len(bdr_res)):
-        print(bdr_res[i])
+    filepath = create_empty_excel(bdr_res, "bdr_" + name_table + ".xlsx", "Таблица БДР")
+
+def create_empty_excel(data, filename: str, sheet_name):
+    if not os.path.exists('excel_files'):
+        os.makedirs('excel_files')
+    
+    filepath = os.path.join('excel_files', filename)
+    
+    # Создаем ExcelWriter
+    with pd.ExcelWriter(filepath, engine='xlsxwriter') as excel_writer:
+        # Создаем DataFrame
+        df = pd.DataFrame(data=data)
+        # Записываем в файл
+        df.to_excel(excel_writer, index=False, header=False, sheet_name=sheet_name)
+        
+        # Получаем текущий рабочий лист и книгу
+        worksheet = excel_writer.sheets[sheet_name]
+        workbook = excel_writer.book
+        
+        # Устанавливаем ширину столбцов
+        for idx, col in enumerate(df.columns):
+            max_length = max(df[col].astype(str).map(len).max(), len(str(col))) + 2
+            worksheet.set_column(idx, idx, max_length)
+        
+        # Добавляем формат границ
+        border_format = workbook.add_format({'border': 1, 'border_color': '#000000'})
+        worksheet.set_column(0, len(df.columns) - 1, None, border_format)
+    
+    return filepath
+
 
 create_tabel_bdr(17)
 
