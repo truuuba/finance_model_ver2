@@ -895,6 +895,57 @@ class Sql:
             el = PPO(data[i][0], data[i][1], data[i][2], del_probel(data[i][3]), data[i][4])
             datas.append(el)
         return datas
+    
+    def take_nazv_fin_org(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT nazv FROM fin_org WHERE Id_p = " + str(id_p) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = make_arr_list(data)
+        for i in range(len(datas)):
+            datas[i] = del_probel(datas[i])
+        return datas    
+
+    def take_st_for_finorg(self):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT st_4_ur.ID, st_4_ur.Id_st_3, st_4_ur.code, st_4_ur.nazv FROM st_4_ur INNER JOIN st_3_ur ON st_4_ur.Id_st_3 = st_3_ur.ID WHERE st_3_ur.Id_st_2 = 60;"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stati_ur(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]))
+            datas.append(el)
+        return datas
+    
+    def input_fin_org(self, id_p, nazv):
+        cursor = self.cnxn.cursor()
+        id_ = sql.create_id("fin_org")
+        zapros = "INSERT INTO fin_org (ID, Id_p, nazv) VALUES (" + str(id_) + ", " + str(id_p) + ", '" + nazv + "');"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+    def take_st4_of_code(self, code):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID FROM st_4_ur WHERE code = '" + code + "';"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        return data[0][0]
+    
+    def take_nazv_finorg(self, id_p, nazv):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID FROM fin_org WHERE Id_p = " + str(id_p) + " AND nazv = '" + nazv + "';"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        return data[0][0]
+
+    def input_stati_finorg(self, id_f_org, id_st_4, mnt, yr, ds):
+        cursor = self.cnxn.cursor()
+        id_ = sql.create_id("stat_fin_org")
+        zapros = "INSERT INTO fin_org (ID, Id_f_org, Id_st_4, mnt, yr, ds) VALUES (" + str(id_) + ", " + str(id_f_org) + ", " + str(id_st_4) + ", '" + mnt + "', " + str(yr) + ", " + str(ds) + ");"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
 
 def make_arr_list(arr):
     arr2 = []
