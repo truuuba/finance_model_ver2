@@ -756,10 +756,10 @@ class Sql:
     
     def found_id_obj(self, nazv, id_p):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT ID FROM object_str WHERE nazv = " + nazv + " AND Id_p = " + str(id_p) + ";"
+        zapros = "SELECT ID FROM object_str WHERE nazv = '" + nazv + "' AND Id_p = " + str(id_p) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
-        return data[0]
+        return data[0][0]
     
     def found_obj_str_stati_(self, id_obj):
         cursor = self.cnxn.cursor()
@@ -942,7 +942,7 @@ class Sql:
     def input_stati_finorg(self, id_f_org, id_st_4, mnt, yr, ds):
         cursor = self.cnxn.cursor()
         id_ = sql.create_id("stat_fin_org")
-        zapros = "INSERT INTO fin_org (ID, Id_f_org, Id_st_4, mnt, yr, ds) VALUES (" + str(id_) + ", " + str(id_f_org) + ", " + str(id_st_4) + ", '" + mnt + "', " + str(yr) + ", " + str(ds) + ");"
+        zapros = "INSERT INTO stat_fin_org (ID, Id_f_org, Id_st_4, mnt, yr, ds) VALUES (" + str(id_) + ", " + str(id_f_org) + ", " + str(id_st_4) + ", '" + mnt + "', " + str(yr) + ", " + str(ds) + ");"
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
