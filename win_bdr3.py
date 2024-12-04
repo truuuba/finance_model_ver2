@@ -1,8 +1,9 @@
 import customtkinter as CTk
 import re
 from tkinter import messagebox as mb
-#from make_bdr import * 
+from make_bdr import * 
 from connect_db import sql
+from make_ppo import *
 
 CTk.set_appearance_mode("dark")
 CTk.set_default_color_theme("green")
@@ -40,7 +41,7 @@ class win_bdr3(CTk.CTk):
         self.btn_change.grid(row=2, column=0, padx=(5,5), pady=(5,5))
 
         if sql.prov_BDR_iskl(id_p=self.id_p):
-            self.but_next2 = CTk.CTkButton(master=self, text="Использовать существующие данные - создать БДР")
+            self.but_next2 = CTk.CTkButton(master=self, text="Использовать существующие данные - создать БДР", command=self.make_bdr)
             self.but_next2.grid(row=3, column=0, padx=(5,5), pady=(5,5))
 
     def input_data(self):
@@ -58,3 +59,8 @@ class win_bdr3(CTk.CTk):
             mb.showinfo("Успешно!", "Таблица БДР создана")
         else:
             mb.showerror("Ошибка!", "Введены неверные значения")
+
+    def make_bdr(self):
+        create_tabel_ppo(id_pr=self.id_p, prov_create=False)
+        create_tabel_bdr(self.id_p)
+        mb.showinfo("Успешно!", "Таблица БДР была успешно создана")
