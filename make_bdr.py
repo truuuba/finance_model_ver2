@@ -21,7 +21,7 @@ def make_shapka(yr, mnt, prod):
     for i in range(prod):
         arr.append(mnt + " " + str(yr))
         mnt = changer_mnt(mnt)
-        if mnt == 'Декабрь':
+        if mnt == 'Январь':
             yr += 1
     return arr
 
@@ -359,9 +359,33 @@ def create_tabel_bdr(id_pr):
                 for j in range(len(arr_elems_3[i])):
                     bdr_res.append(arr_elems_3[i][j])
 
-    filepath = create_empty_excel(bdr_res, "bdr_" + name_table + ".xlsx", "Таблица БДР")
+    #Добавляем общий подсчет
+    bdr_result = []
+    #Чуток меняем шапку
+    new_shapka = [bdr_res[0][0], 'Итого']
+    for i in range(1, len(bdr_res[0])):
+        new_shapka.append(bdr_res[0][i])
+    bdr_result.append(new_shapka)
+    #Меняем остальную табличку
+    for i in range(1, len(bdr_res)):
+        arr = [bdr_res[i][0]]
+        arr.append(0)
+        for j in range(1, len(bdr_res[i])):
+            arr[1] += bdr_res[i][j]
+            arr.append(bdr_res[i][j])
+        bdr_result.append(arr)
+
+    #Меняем нули 
+    for i in range(1, len(bdr_result)):
+        for j in range(1, len(bdr_result[i])):
+            if bdr_result[i][j] == 0:
+                bdr_result[i][j] = ''
+
+    #Создаем файл
+    filepath = create_empty_excel(bdr_result, "bdr_" + name_table + ".xlsx", "Таблица БДР")
 
 def create_empty_excel(data, filename: str, sheet_name):
+    # Проверяем, существует ли папка, и создаем, если нет
     if not os.path.exists('excel_files'):
         os.makedirs('excel_files')
     
@@ -378,20 +402,65 @@ def create_empty_excel(data, filename: str, sheet_name):
         worksheet = excel_writer.sheets[sheet_name]
         workbook = excel_writer.book
         
-        # Устанавливаем ширину столбцов
-        for idx, col in enumerate(df.columns):
-            max_length = max(df[col].astype(str).map(len).max(), len(str(col))) + 2
-            worksheet.set_column(idx, idx, max_length)
+        # Формат для первой строки
+        header_format = workbook.add_format({
+            'bold': True,
+            'align': 'center',
+            'valign': 'vcenter',
+            'bg_color': '#E3EADE',
+            'border': 1
+        })
         
-        # Добавляем формат границ
-        border_format = workbook.add_format({'border': 1, 'border_color': '#000000'})
-        worksheet.set_column(0, len(df.columns) - 1, None, border_format)
+        # Форматы для остального содержимого
+        style_1 = workbook.add_format({'bg_color': '#84A98C', 'border': 1})
+        style_2 = workbook.add_format({'bg_color': '#B9C8B7', 'border': 1})
+        style_3 = workbook.add_format({'bg_color': '#E3EADE', 'border': 1})
+        style_4 = workbook.add_format({'bg_color': '#9A8C98', 'border': 1})
+        style_5 = workbook.add_format({'bg_color': '#C9ADA7', 'border': 1})
+        style_6 = workbook.add_format({'bg_color': '#F2E9E4', 'border': 1})
+        default_style = workbook.add_format({'border': 1})
+
+        # Определяем ширину столбцов по всей таблице
+        for col_num, col_data in enumerate(zip(*data)):  # Транспонируем data, чтобы обработать по столбцам
+            max_length = max([len(str(val)) for val in col_data if pd.notnull(val)], default=0)
+            worksheet.set_column(col_num, col_num, max_length + 2)
+        
+        # Закрепляем первую строку
+        worksheet.freeze_panes(1, 0)
+        
+        # Применяем формат к первой строке
+        for col_num, cell_value in enumerate(data[0]):
+            worksheet.write(0, col_num, cell_value, header_format)
+        
+        # Применяем цветовую палитру для остальных строк
+        for row_num, row_data in enumerate(data[1:], start=1):  # Пропускаем первую строку
+            first_cell_value = row_data[0] if row_data else ""
+            if isinstance(first_cell_value, str):
+                if re.match(r'^\d+ ', first_cell_value):  # Число и пробел
+                    row_format = style_1
+                elif re.match(r'^\d+\.\d+ ', first_cell_value):  # Число.число и пробел
+                    row_format = style_2
+                elif re.match(r'^\d+\.\d+\.\d+ ', first_cell_value):  # Число.число.число и пробел
+                    row_format = style_3
+                elif first_cell_value.strip() == "Поступления":  # "Поступления"
+                    row_format = style_4
+                elif (
+                    re.match(r'^Корпус №\d+$', first_cell_value) or  # "Корпус №цифра"
+                    re.match(r'^(СОШ|ДОУ|Пождепо|Медучреждение)', first_cell_value)  # Начинается с ключевых слов
+                ):
+                    row_format = style_5
+                elif re.match(r'^Корпус №\d+ ', first_cell_value):  # Корпус №цифра-пробел
+                    row_format = style_6
+                else:
+                    row_format = default_style
+            else:
+                row_format = default_style
+
+            # Записываем строку с применением формата
+            for col_num, cell_value in enumerate(row_data):
+                worksheet.write(row_num, col_num, cell_value, row_format)
     
     return filepath
 
-
-create_tabel_bdr(17)
-
-#https://coolors.co/582f0e-7f4f24-936639-a68a64-b6ad90-c2c5aa-a4ac86-656d4a-414833-333d29
-#https://coolors.co/cad2c5-84a98c-52796f-354f52-2f3e46
-#https://coolors.co/22223b-4a4e69-9a8c98-c9ada7-f2e9e4
+#https://coolors.co/4a4e69-726d81-9a8c98-b29da0-c9ada7-d4bcb7-decbc6-e8dad5-f2e9e4
+#https://coolors.co/e3eade-d7ded2-cad2c5-b9c8b7-a7bea9-9fb9a2-96b49b-84a98c-6b917e-52796f
