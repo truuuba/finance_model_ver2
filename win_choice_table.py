@@ -43,7 +43,7 @@ class choice_table(CTk.CTk):
         #Добавление финансовых организаций
         self.fin_organisation = CTk.CTkLabel(master=self, text="Финансовые организации")
         self.fin_organisation.grid(row=8, column=0, padx=(5,5), pady=(5,5))
-        self.fin_org = CTk.CTkButton(master=self, text="Открытие фин.организаций")
+        self.fin_org = CTk.CTkButton(master=self, text="Открытие фин.организаций", command=self.open_fin_org)
         self.fin_org.grid(row=9, column=0, padx=(5,5), pady=(5,5))
 
         #Изменения в конкретных таблицах
@@ -93,6 +93,6 @@ class choice_table(CTk.CTk):
         a = win_bdds(self.id_p)
         a.mainloop()
 
-    def fin_org(self):
+    def open_fin_org(self):
         a = win_fin_org(self.id_p)
         a.mainloop()
