@@ -4,9 +4,9 @@ from connect_db import sql
 CTk.set_appearance_mode("dark")
 CTk.set_default_color_theme("green")
 
-class BDDS_win(CTk.CTkScrollableFrame):
+class BDDS_win(CTk.CTkFrame):
     def __init__(self, master, stati):
-        super().__init__(master, width=1000, height=250, orientation='horizontal')
+        super().__init__(master, width=1000, height=250)
         #Создаем массив по 4 уровню
         arr = []
         for i in range(len(stati)):
@@ -60,7 +60,6 @@ class win_bdds(CTk.CTk):
         self.but_next = CTk.CTkButton(master=self, text="Параметр выбраны", command=self.open_data)
         self.but_next.grid(row=2, column=0, padx=(5,5), pady=(5,5))
 
-
     def open_data(self):
         nazvanie = self.choice_obj.get()
         self.ttle_st = CTk.CTkLabel(master=self, text="Введите информацию в БДДС")
@@ -74,5 +73,7 @@ class win_bdds(CTk.CTk):
         self.win_BDDS = BDDS_win(self, stati=stati)
         self.win_BDDS.grid(row=4, column=0, padx=(5,5), pady=(5,5))
 
-        self.but_input = CTk.CTkButton(master=self, text="Данные введены")
+        self.but_input = CTk.CTkButton(master=self, text="Данные введены", command=self.input_data_bdds)
         self.but_input.grid(row=5, column=0, padx=(5,5), pady=(5,5))
+
+    def input_data_bdds(self):
