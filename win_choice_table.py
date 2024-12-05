@@ -37,7 +37,7 @@ class choice_table(CTk.CTk):
         #БДДС
         self.bdds = CTk.CTkLabel(master=self, text="Таблица БДДС")
         self.bdds.grid(row=6, column=0, padx=(5,5), pady=(5,5))
-        self.bdds_ex = CTk.CTkButton(master=self, text="Создать таблицу БДДС в Excel", command=self.open_win_bdds)
+        self.bdds_ex = CTk.CTkButton(master=self, text="Добавить данные в БДДС", command=self.open_win_bdds)
         self.bdds_ex.grid(row=7, column=0, padx=(5,5), pady=(5,5))
 
         #Добавление финансовых организаций
