@@ -9,17 +9,17 @@ def insertion_sort(unsorted):
     # итерация по неотсортированным массивам
     for i in range(1, n):
         # получаем значение элемента
-        val = unsorted[i].id_ 
+        val = unsorted[i] 
         # записываем в hole индекс i
         hole = i
         # проходим по массиву в обратную сторону, пока не найдём элемент больше текущего
-        while hole > 0 and unsorted[hole - 1].id_ > val: 
+        while hole > 0 and unsorted[hole - 1].id_ > val.id_: 
             # переставляем элементы местами , чтобы получить правильную позицию
             unsorted[hole] = unsorted[hole - 1]
             # делаем шаг назад
             hole -= 1
         # вставляем значение на верную позицию
-        unsorted[hole] = val
+        unsorted[hole] = val 
 
 def changer_mnt(mnt):
     ind_i = 0
@@ -90,32 +90,31 @@ def make_bdds(id_pr):
                 prov_st4.append(e.code)
     prov_st3 = []
     for el in obsh_arr_st4:
-        elem3 = sql.found_st_3_ur(el.id_st)
+        elem3 = sql.found_st_3_ur(el.id_)
         for e in elem3:
             if not (e.code in prov_st3):
                 obsh_arr_st3.append(e)
                 prov_st3.append(e.code)
     prov_st2 = []
     for el in obsh_arr_st3:
-        elem2 = sql.found_st_2_ur(el.id_st)
+        elem2 = sql.found_st_2_ur(el.id_)
         for e in elem2:
             if not (e.code in prov_st2):
                 obsh_arr_st2.append(e)
                 prov_st2.append(e.code)
     prov_st1 = []
     for el in obsh_arr_st2:
-        elem1 = sql.found_st_1_ur(el.id_st)
+        elem1 = sql.found_st_1_ur(el.id_)
         for e in elem1:
             if not (e.code in prov_st1):
                 obsh_arr_st1.append(e)
                 prov_st1.append(e.code)
 
     #Надо отсортировать массив по возрастанию на основе айдишников
-    print(len(obsh_arr_st1))
-    obsh_arr_st1 = insertion_sort(obsh_arr_st1)
-    obsh_arr_st2 = insertion_sort(obsh_arr_st2)
-    obsh_arr_st3 = insertion_sort(obsh_arr_st3)
-    obsh_arr_st4 = insertion_sort(obsh_arr_st4)
+    insertion_sort(obsh_arr_st1)
+    insertion_sort(obsh_arr_st2)
+    insertion_sort(obsh_arr_st3)
+    insertion_sort(obsh_arr_st4)
     
     #Пойдем по объектам строительства - тут все статьи в одной куче
     obj_arr_st1 = []
@@ -131,31 +130,31 @@ def make_bdds(id_pr):
                 prov_st4.append(e.code)
     prov_st3 = []
     for el in obj_arr_st4:
-        elem3 = sql.found_st_3_ur(el.id_st)
+        elem3 = sql.found_st_3_ur(el.id_)
         for e in elem3:
             if not (e.code in prov_st3):
                 obj_arr_st3.append(e)
                 prov_st3.append(e.code)
     prov_st2 = []
     for el in obj_arr_st3:
-        elem2 = sql.found_st_2_ur(element.id_st)
+        elem2 = sql.found_st_2_ur(el.id_)
         for e in elem2:
             if not(e.code in prov_st2):
                 obj_arr_st2.append(e)
                 prov_st2.append(e.code) 
     prov_st1 = []
     for el in obj_arr_st2:
-        elem1 = sql.found_st_1_ur(element.id_st)
+        elem1 = sql.found_st_1_ur(el.id_)
         for e in elem2:
             if not(e.code in prov_st1):
                 obj_arr_st1.append(e)
                 prov_st1.append(e.code)  
 
     #Еще посортируем объекты строительства
-    obj_arr_st1 = insertion_sort(obj_arr_st1)
-    obj_arr_st2 = insertion_sort(obj_arr_st2)
-    obj_arr_st3 = insertion_sort(obj_arr_st3)
-    obj_arr_st4 = insertion_sort(obj_arr_st4)
+    insertion_sort(obj_arr_st1)
+    insertion_sort(obj_arr_st2)
+    insertion_sort(obj_arr_st3)
+    insertion_sort(obj_arr_st4)
 
     #Начинаем формировать таблицу БДДС - до первого столкновения с объектами строительства
     bdds_res = [] 
@@ -203,15 +202,15 @@ def make_bdds(id_pr):
                                                 #Проверка по времени расходов
                                                 if time == temp:
                                                     if el4.param == "поступление":
-                                                        elem_st4[i] += float(element.plan_ds)
-                                                        elem_st3[i] += float(element.plan_ds)
-                                                        elem_st2[i] += float(element.plan_ds)
-                                                        elem_st1[i] += float(element.plan_ds)
+                                                        elem_st4[i] += float(element.ds)
+                                                        elem_st3[i] += float(element.ds)
+                                                        elem_st2[i] += float(element.ds)
+                                                        elem_st1[i] += float(element.ds)
                                                     else:
-                                                        elem_st4[i] -= float(element.plan_ds)
-                                                        elem_st3[i] -= float(element.plan_ds)
-                                                        elem_st2[i] -= float(element.plan_ds)
-                                                        elem_st1[i] -= float(element.plan_ds)
+                                                        elem_st4[i] -= float(element.ds)
+                                                        elem_st3[i] -= float(element.ds)
+                                                        elem_st2[i] -= float(element.ds)
+                                                        elem_st1[i] -= float(element.ds)
                                     ARR_elems_4.append(elem_st4) #Добавление данных по всему третьему уровню
                             Arr_elems_3.append(elem_st3) #Добавление данных по 3 статье
                             Arr_elems_4.append(ARR_elems_4) #Добавление 4 статьи по каждой статье третьего уровня
@@ -227,6 +226,39 @@ def make_bdds(id_pr):
                     for k in range(len(arr_elems_4[i][j])):
                         bdds_res.append(arr_elems_4[i][j][k])
 
+    #Начинаем проход по объектам строительства
+    for el_ in object_str:
+        arr_obj = [el_.nazv]
+        for i in range(prod):
+            arr_obj.append(0)
+        #Массивы для сортировки
+        arr_elems_1 = []
+        arr_elems_2 = []
+        arr_elems_3 = []
+        arr_elems_4 = []
+        #Проходимся по статьям первого уровня
+        for el1 in obj_arr_st1:
+            arr_elems_1 = [el1.code + " " + el1.nazv]
+            for i in range(prod):
+                arr_elems_1.append(0)
+            #Идем по 2 уровню
+            for el2 in obj_arr_st2:
+                #Ищем подходящие статьи
+                if el1.id_ == el2.id_st:
+                    Arr_elems_2 = [el2.code + " " + el2.nazv]
+                    for i in range(prod):
+                        Arr_elems_2.append(0)
+                    #Идем по 3 уровню
+                    
+
+            arr_elems_2.append(Arr_elems_2)
+        #Добавляем все данные по объекту
+        bdds_res.append(arr_obj)
+        for i in range(len(arr_elems_1)):
+            bdds_res.append(arr_elems_1[i])
+            for j in range(len(arr_elems_2)):
+                bdds_res.append(arr_elems_2[i][j])
+    
     for i in range(len(bdds_res)):
         print(bdds_res[i])
 
