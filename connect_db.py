@@ -1057,6 +1057,28 @@ class Sql:
             el = st_ur1(data[i][0], del_probel(data[i][1]), del_probel(data[i][2]))
             datas.append(el)
         return datas
+    
+    def append_obj_4st(self):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT st_4_ur.ID, st_4_ur.Id_st_3, st_4_ur.code, st_4_ur.nazv, st_4_ur.parametr FROM st_4_ur INNER JOIN st_3_ur ON st_4_ur.Id_st_3 = st_3_ur.ID INNER JOIN st_2_ur ON st_3_ur.Id_st_2 = st_2_ur.ID WHERE st_2_ur.Id_st_1 = 9 OR st_3_ur.Id_st_2 = 64;"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = st_ur4(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]), del_probel(data[i][4]))
+            datas.append(el)
+        return datas
+    
+    def append_obsh_4st(self):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT st_4_ur.ID, st_4_ur.Id_st_3, st_4_ur.code, st_4_ur.nazv, st_4_ur.parametr FROM st_4_ur INNER JOIN st_3_ur ON st_4_ur.Id_st_3 = st_3_ur.ID INNER JOIN st_2_ur ON st_3_ur.Id_st_2 = st_2_ur.ID WHERE st_2_ur.Id_st_1 = 16 OR st_3_ur.Id_st_2 = 71 OR st_3_ur.Id_st_2 = 73 OR st_3_ur.Id_st_2 = 75 OR st_3_ur.Id_st_2 = 77 OR st_3_ur.Id_st_2 = 79 OR st_3_ur.Id_st_2 = 81;"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = st_ur4(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]), del_probel(data[i][4]))
+            datas.append(el)
+        return datas
 
 def make_arr_list(arr):
     arr2 = []
