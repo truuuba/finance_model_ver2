@@ -7,7 +7,7 @@ CTk.set_appearance_mode("dark")
 CTk.set_default_color_theme("green")
 
 class BDDS_win(CTk.CTkFrame):
-    def __init__(self, master, stati, _list_):
+    def __init__(self, master, stati, _list_, prov_obj):
         super().__init__(master, width=1000, height=250)
         #Создаем массив по 4 уровню
         arr = []
@@ -15,6 +15,16 @@ class BDDS_win(CTk.CTkFrame):
             elem = sql.take_st_ur_4(stati[i].id_o)
             for el in elem:
                 arr.append(el.code + " " + el.nazv) 
+
+        #Добавляем оставшиеся статьи, которые не входят в БДР
+        if prov_obj:
+            mass_obj = sql.append_obj_4st()
+            for i in range(len(mass_obj)):
+                arr.append(mass_obj[i].code + " " + mass_obj[i].nazv)
+        else:
+            mass_obsh = sql.append_obsh_4st()
+            for i in range(len(mass_obsh)):
+                arr.append(mass_obsh[i].code + " " + mass_obsh[i].nazv)
 
         #Выбор статьи
         self.ttle_stat = CTk.CTkLabel(master=self, text="Выберите статью")
@@ -72,13 +82,15 @@ class win_bdds(CTk.CTk):
         self.nazvanie = self.choice_obj.get()
         self.ttle_st = CTk.CTkLabel(master=self, text="Введите информацию в БДДС")
         self.ttle_st.grid(row=3, column=0, padx=(5,5), pady=(5,5))
+        prov_obj = False
 
         if self.nazvanie == 'Общие статьи':
             self.stati = sql._take_obsh_stati_(id_p=self.id_p)
         else:
             id_obj = sql.found_id_obj(nazv=self.nazvanie, id_p=self.id_p)
             self.stati = sql.found_obj_str_stati_(id_obj)
-        self.win_BDDS = BDDS_win(self, stati=self.stati, _list_=self._list_)
+            prov_obj = True
+        self.win_BDDS = BDDS_win(self, stati=self.stati, _list_=self._list_, prov_obj=prov_obj)
         self.win_BDDS.grid(row=4, column=0, padx=(5,5), pady=(5,5))
 
         self.but_input = CTk.CTkButton(master=self, text="Данные введены", command=self.input_data_bdds)
@@ -101,6 +113,10 @@ class win_bdds(CTk.CTk):
             id_st4 = sql.take_st4_of_code(z[0])
             #Поиск айдишника по 3 статьям
             id_st3_ob = sql.take_st3_for_obsh(id_st4)
+            '''
+            Вот сюда нужно дописать условие на добавление иключений
+            (Вытащить айди по второй статье и сравнить с айдишниками исключений)            
+            '''
             id_obsh = 0
             for el in self.stati:
                 if el.id_o == id_st3_ob:
