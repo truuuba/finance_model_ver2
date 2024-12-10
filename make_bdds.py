@@ -238,26 +238,74 @@ def make_bdds(id_pr):
         arr_elems_4 = []
         #Проходимся по статьям первого уровня
         for el1 in obj_arr_st1:
-            arr_elems_1 = [el1.code + " " + el1.nazv]
+            elem_st1 = [el1.code + " " + el1.nazv]
             for i in range(prod):
-                arr_elems_1.append(0)
+                elem_st1.append(0)
             #Идем по 2 уровню
+            Arr_elems_2 = []
+            Arr_elems_3 = []
+            Arr_elems_4 = []
             for el2 in obj_arr_st2:
                 #Ищем подходящие статьи
                 if el1.id_ == el2.id_st:
-                    Arr_elems_2 = [el2.code + " " + el2.nazv]
+                    elem_st2 = [el2.code + " " + el2.nazv]
                     for i in range(prod):
-                        Arr_elems_2.append(0)
+                        elem_st2.append(0)
                     #Идем по 3 уровню
-                    
-
+                    ARR_elems_3 = []
+                    ARR_elems_4 = []
+                    for el3 in obj_arr_st3:
+                        #Ищем подхоядщие статьи
+                        if el2.id_ == el3.id_st:
+                            elem_st3 = [el3.code + " " + el3.code]
+                            for i in range(prod):
+                                elem_st3.append(0)
+                            #Идем по 4 уровню
+                            ARR_elements_4 = []
+                            for el4 in obj_arr_st4:
+                                #Ищем подходящие статьи
+                                if el3.id_ == el4.id_st:
+                                    elem_st4 = [el4.code + " " + el4.nazv]
+                                    for i in range(prod):
+                                        elem_st4.append(0)
+                                    #Идем по статьям БДДС объекта
+                                    for element in arr_BDDS_obj:
+                                        if el4.id_ == element.id_st4:
+                                            #Цикл по всей продолжительности проекта
+                                            for i, time in enumerate(shapka):
+                                                temp = element.mnt + " " + str(element.yr)
+                                                #Проверка по времени расходов
+                                                if time == temp:
+                                                    if el4.param == "поступление":
+                                                        elem_st4[i] += float(element.ds)
+                                                        elem_st3[i] += float(element.ds)
+                                                        elem_st2[i] += float(element.ds)
+                                                        elem_st1[i] += float(element.ds)
+                                                    else:
+                                                        elem_st4[i] -= float(element.ds)
+                                                        elem_st3[i] -= float(element.ds)
+                                                        elem_st2[i] -= float(element.ds)
+                                                        elem_st1[i] -= float(element.ds)
+                                    ARR_elements_4.append(elem_st4)
+                            ARR_elems_3.append(elem_st3)
+                            ARR_elems_4.append(ARR_elements_4)
+                    Arr_elems_2.append(elem_st2)
+                    Arr_elems_3.append(ARR_elems_3)
+                    Arr_elems_4.append(ARR_elems_4)
+            arr_elems_4.append(Arr_elems_4)
+            arr_elems_3.append(Arr_elems_3)
             arr_elems_2.append(Arr_elems_2)
+            arr_elems_1.append(elem_st1)
         #Добавляем все данные по объекту
         bdds_res.append(arr_obj)
         for i in range(len(arr_elems_1)):
             bdds_res.append(arr_elems_1[i])
             for j in range(len(arr_elems_2)):
                 bdds_res.append(arr_elems_2[i][j])
+                for k in range(len(arr_elems_3)):
+                    bdds_res.append(arr_elems_3[i][j][k])
+                    for l in range(len(arr_elems_4)):
+                        bdds_res.append(arr_elems_4[i][j][k][l])
     
     for i in range(len(bdds_res)):
         print(bdds_res[i])
