@@ -307,6 +307,210 @@ def make_bdds(id_pr):
                     for l in range(len(arr_elems_4)):
                         bdds_res.append(arr_elems_4[i][j][k][l])
     
+    #Начинаем проход по общим статьям, которые идут после объектов строительства
+    for el in obsh_arr_st1:
+        #Проверяем айди по статам до объектов
+        if el.id_ == 5 or el.id_ == 6 or el.id_ == 7:
+            #Массивы для сортировки
+            arr_elems_2 = []
+            arr_elems_3 = []
+            arr_elems_4 = []
+            elem_st1 = [el.code + ' ' + el.nazv]
+            for i in range(prod):
+                elem_st1.append(0)
+            for el2 in obsh_arr_st2:
+                #Проверка подходящей статьи на втором уровне
+                if el2.id_st == el.id_:
+                    Arr_elems_3 = []
+                    Arr_elems_4 = []
+                    #Создание массива по 2 статье
+                    elem_st2 = [el2.code + ' ' + el2.nazv]
+                    for i in range(prod):
+                        elem_st2.append(0)
+                    for el3 in obsh_arr_st3:
+                        #Проверка подходящей статьи на третьем уровне
+                        if el3.id_st == el2.id_:
+                            #Создание массива по 3 статье
+                            elem_st3 = [el3.code + ' ' + el3.nazv]
+                            for i in range(prod):
+                                elem_st3.append(0)
+                            ARR_elems_4 = []
+                            for el4 in obsh_arr_st4:
+                                if el4.id_st == el3.id_:
+                                    #Создание массива по 4 статье
+                                    elem_st4 = [el4.code + ' ' + el4.nazv]
+                                    for i in range(prod):
+                                        elem_st4.append(0)
+                                    #Идем по поиску в общем БДДС
+                                    for element in arr_BDDS_obsh:
+                                        if el4.id_ == element.id_st4:
+                                            #Цикл по всей продолжительности проекта
+                                            for i, time in enumerate(shapka):
+                                                temp = element.mnt + " " + str(element.yr)
+                                                #Проверка по времени расходов
+                                                if time == temp:
+                                                    if el4.param == "поступление":
+                                                        elem_st4[i] += float(element.ds)
+                                                        elem_st3[i] += float(element.ds)
+                                                        elem_st2[i] += float(element.ds)
+                                                        elem_st1[i] += float(element.ds)
+                                                    else:
+                                                        elem_st4[i] -= float(element.ds)
+                                                        elem_st3[i] -= float(element.ds)
+                                                        elem_st2[i] -= float(element.ds)
+                                                        elem_st1[i] -= float(element.ds)
+                                    ARR_elems_4.append(elem_st4) #Добавление данных по всему третьему уровню
+                            Arr_elems_3.append(elem_st3) #Добавление данных по 3 статье
+                            Arr_elems_4.append(ARR_elems_4) #Добавление 4 статьи по каждой статье третьего уровня
+                arr_elems_2.append(elem_st2)
+                arr_elems_3.append(Arr_elems_3)
+                arr_elems_4.append(Arr_elems_4)
+            #Добавляем данные по каждой статье
+            bdds_res.append(elem_st1)
+            for i in range(len(arr_elems_2)):
+                bdds_res.append(arr_elems_2[i])
+                for j in range(len(arr_elems_3[i])):
+                    bdds_res.append(arr_elems_3[i][j])
+                    for k in range(len(arr_elems_4[i][j])):
+                        bdds_res.append(arr_elems_4[i][j][k])
+
+    #Переходим к финансовым организациям - пункт 8.1
+    fin_organisation = sql.take_fin_org(id_pr)
+    stat_fin_org = []
+    #Ищем статьи по 4 уровню в фин.орг
+    finorg_arr_st4 = sql.take_st_for_finorg()
+    #Добавляем статьи 3 уровня в фин.орг
+    prov_st3 = []
+    finorg_arr_st3 = []
+    for el in finorg_arr_st4:
+        elem = sql.found_st_3_ur(el.id_)
+        for e in elem:
+            if not (e.code in prov_st3):
+                finorg_arr_st3.append(e)
+                prov_st3.append(e.code)
+    #Добавляем все данные БДДС по финансовым организациям этого проекта
+    for el in fin_organisation:
+        elem = sql.take_stat_fin_org(el.id_)
+        for element in elem:
+            stat_fin_org.append(element)
+    
+    #Переходим на статью 8.5 - по организациям исключениям
+    stat_obj_iskl = []
+    for el in object_str:
+        elem = sql.take_BDDS_obj_iskl(elem.id_)
+        for element in elem:
+            stat_obj_iskl.append(element)
+
+    #Начинаем собирать 8 статью 
+    arr_elems_1 = ['8 Финансовая деятельность'] #ID = 8
+    arr_fin_org = []
+    arr_elems_2 = []
+    arr_elems_3 = []
+    arr_elems_4 = []
+    for i in range(prod):
+        arr_elems_1.append(0)
+    elem_st2 = ['8.1 Кредиты']                  #ID = 60
+    for i in range(prod):
+        elem_st2.append(0)
+    #Идем по финансовым организациям
+    for el in fin_organisation:
+        elem_obj = [el.nazv]
+        for i in range(prod):
+            elem_obj.append(0)
+        Arr_elems_3 = []
+        Arr_elems_4 = []
+        for el3 in finorg_arr_st3:
+            elem_st3 = [el3.code + " " + el3.nazv]
+            for i in range(prod):
+                elem_st3.append(0)
+            ARR_elems_4 = []
+            for el4 in finorg_arr_st4:
+                if el4.id_st == el3.id_:
+                    elem_st4 = [el4.code + " " + el4.nazv]
+                    for i in range(prod):
+                        elem_st4.append(0)
+                    #Проходимся по записям в статах
+                    for elem in stat_fin_org:
+                        if el4.id_ == elem.id_st4:
+                            for i, time in enumerate(shapka):
+                                temp = elem.mnt + " " + str(elem.yr)
+                                if time == temp:
+                                    if el4.param == "поступление":
+                                        elem_st4[i] += float(elem.ds)
+                                        elem_st3[i] += float(elem.ds)
+                                        elem_st2[i] += float(elem.ds)
+                                        arr_elems_1[i] += float(elem.ds)
+                                    else:
+                                        elem_st4[i] -= float(elem.ds)
+                                        elem_st3[i] -= float(elem.ds)
+                                        elem_st2[i] -= float(elem.ds)
+                                        arr_elems_1[i] -= float(elem.ds)
+                    ARR_elems_4.append(elem_st4)
+            Arr_elems_3.append(elem_st3)
+            Arr_elems_4.append(ARR_elems_4)
+        arr_fin_org.append(elem_obj)    
+    arr_elems_2.append(elem_st2)
+    arr_elems_3.append(Arr_elems_3)
+    arr_elems_4.append(Arr_elems_4)
+
+    #Проходимся по нормальным составляющим 8ой статьи
+    for el in obsh_arr_st1:
+        #Проверяем айди по статам до объектов
+        if el.id_ == 8:
+            elem_st1 = [el.code + ' ' + el.nazv]
+            for i in range(prod):
+                elem_st1.append(0)
+            for el2 in obsh_arr_st2:
+                #Проверка подходящей статьи на втором уровне
+                if el2.id_st == el.id_:
+                    Arr_elems_3 = []
+                    Arr_elems_4 = []
+                    #Создание массива по 2 статье
+                    elem_st2 = [el2.code + ' ' + el2.nazv]
+                    for i in range(prod):
+                        elem_st2.append(0)
+                    for el3 in obsh_arr_st3:
+                        #Проверка подходящей статьи на третьем уровне
+                        if el3.id_st == el2.id_:
+                            #Создание массива по 3 статье
+                            elem_st3 = [el3.code + ' ' + el3.nazv]
+                            for i in range(prod):
+                                elem_st3.append(0)
+                            ARR_elems_4 = []
+                            for el4 in obsh_arr_st4:
+                                if el4.id_st == el3.id_:
+                                    #Создание массива по 4 статье
+                                    elem_st4 = [el4.code + ' ' + el4.nazv]
+                                    for i in range(prod):
+                                        elem_st4.append(0)
+                                    #Идем по поиску в общем БДДС
+                                    for element in arr_BDDS_obsh:
+                                        if el4.id_ == element.id_st4:
+                                            #Цикл по всей продолжительности проекта
+                                            for i, time in enumerate(shapka):
+                                                temp = element.mnt + " " + str(element.yr)
+                                                #Проверка по времени расходов
+                                                if time == temp:
+                                                    if el4.param == "поступление":
+                                                        elem_st4[i] += float(element.ds)
+                                                        elem_st3[i] += float(element.ds)
+                                                        elem_st2[i] += float(element.ds)
+                                                        arr_elems_1[i] += float(element.ds)
+                                                    else:
+                                                        elem_st4[i] -= float(element.ds)
+                                                        elem_st3[i] -= float(element.ds)
+                                                        elem_st2[i] -= float(element.ds)
+                                                        arr_elems_1[i] -= float(element.ds)
+                                    ARR_elems_4.append(elem_st4) #Добавление данных по всему третьему уровню
+                            Arr_elems_3.append(elem_st3) #Добавление данных по 3 статье
+                            Arr_elems_4.append(ARR_elems_4) #Добавление 4 статьи по каждой статье третьего уровня
+                arr_elems_2.append(elem_st2)
+                arr_elems_3.append(Arr_elems_3)
+                arr_elems_4.append(Arr_elems_4)
+
+    #Проход по 8.5 - исключения из объектов строения
+
+
     for i in range(len(bdds_res)):
         print(bdds_res[i])
 
