@@ -87,8 +87,8 @@ class win_bdds(CTk.CTk):
         if self.nazvanie == 'Общие статьи':
             self.stati = sql._take_obsh_stati_(id_p=self.id_p)
         else:
-            id_obj = sql.found_id_obj(nazv=self.nazvanie, id_p=self.id_p)
-            self.stati = sql.found_obj_str_stati_(id_obj)
+            self.id_obj = sql.found_id_obj(nazv=self.nazvanie, id_p=self.id_p)
+            self.stati = sql.found_obj_str_stati_(self.id_obj)
             prov_obj = True
         self.win_BDDS = BDDS_win(self, stati=self.stati, _list_=self._list_, prov_obj=prov_obj)
         self.win_BDDS.grid(row=4, column=0, padx=(5,5), pady=(5,5))
@@ -112,20 +112,27 @@ class win_bdds(CTk.CTk):
             #Поиск айдишника уровня статей
             id_st4 = sql.take_st4_of_code(z[0])
             #Поиск айдишника по 3 статьям
-            id_st3_ob = sql.take_st3_for_obsh(id_st4)
-            '''
-            Вот сюда нужно дописать условие на добавление иключений
-            (Вытащить айди по второй статье и сравнить с айдишниками исключений)            
-            '''
-            id_obsh = 0
-            for el in self.stati:
-                if el.id_o == id_st3_ob:
-                    id_obsh = el.id_
-            #Вводим данные в БДДС
-            if self.nazvanie == 'Общие статьи':
-                sql.input_data_BDDS_obsh(id_obsh, id_st4, self._list_[2].get(), self._list_[1].get(), self._list_[3].get())
+            stat_3 = sql.found_st_3_ur(id_st4)
+             
+            #Проверка на исключения БДДС общих
+            if stat_3.id_st == 71 or stat_3.id_st == 73 or stat_3.id_st == 75 or stat_3.id_st == 77 or stat_3.id_st == 79 or stat_3.id_st == 81 or stat_3.id_st == 83 or stat_3.id_st == 84 or stat_3.id_st == 85 or stat_3.id_st == 86:
+                sql.input_BDDS_obsh_iskl(id_p=self.id_p, id_st4=id_st4, mnt=self._list_[1].get(), yr=self._list_[2].get(), ds=self._list_[3].get())
+                mb.showinfo("Успешно!", "Данные были успешно добавлены")
+            #Проверка на исключения БДДС объектов
+            elif (stat_3.id_st >= 64) and (stat_3.id_st <= 70):
+                sql.input_BDDS_obj_iskl(id_obj=self.id_obj, id_st4=id_st4, mnt=self._list_[1].get(), yr=self._list_[2].get(), ds=self._list_[3].get())
+                mb.showinfo("Успешно!", "Данные были успешно добавлены")
+            #Остальные статьи, которые идут и по БДР
             else:
-                sql.input_data_BDDS_obj(id_obsh, id_st4, self._list_[2].get(), self._list_[1].get(), self._list_[3].get())
-            mb.showinfo("Успешно!", "Данные были успешно добавлены")
+                id_obsh = 0
+                for el in self.stati:
+                    if el.id_o == stat_3.id_:
+                        id_obsh = el.id_
+                #Вводим данные в БДДС
+                if self.nazvanie == 'Общие статьи':
+                    sql.input_data_BDDS_obsh(id_obsh, id_st4, self._list_[2].get(), self._list_[1].get(), self._list_[3].get())
+                else:
+                    sql.input_data_BDDS_obj(id_obsh, id_st4, self._list_[2].get(), self._list_[1].get(), self._list_[3].get())
+                mb.showinfo("Успешно!", "Данные были успешно добавлены")
 
                 
