@@ -129,6 +129,21 @@ class BDDS:
         self.yr = yr
         self.ds = ds
 
+class fin_org:
+    def __init__(self, id_, id_p, nazv):
+        self.id_ = id_
+        self.id_p = id_p
+        self.nazv = nazv
+
+class stat_fin_org:
+    def __init__(self, id_, id_f_org, id_st4, mnt, yr, ds):
+        self.id_ = id_
+        self.id_f_org = id_f_org
+        self.id_st4 = id_st4
+        self.mnt = mnt
+        self.yr = yr
+        self.ds = ds
+
 class Sql:
     def __init__(self, database="FM_model", server=r"NODE2\DBLMSSQLSRV", username="connect_FM_model", password=r"9*%dA6lU&T6)p2PX", driver="ODBC Driver 17 for SQL Server"):
         connectionString = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
@@ -954,13 +969,6 @@ class Sql:
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
-
-    def take_st3_for_obsh(self, id_st_4):
-        cursor = self.cnxn.cursor()
-        zapros = "SELECT st_3_ur.ID FROM st_3_ur INNER JOIN st_4_ur ON st_4_ur.Id_st_3 = st_3_ur.ID WHERE st_4_ur.ID = " + str(id_st_4) + ";"
-        cursor.execute(zapros)
-        data = cursor.fetchall()
-        return data[0][0]
     
     def input_data_BDDS_obsh(self, id_obsh, id_st4, yr, mnt, ds):
         cursor = self.cnxn.cursor()
@@ -1077,6 +1085,55 @@ class Sql:
         datas = []
         for i in range(len(data)):
             el = st_ur4(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]), del_probel(data[i][4]))
+            datas.append(el)
+        return datas
+    
+    def input_BDDS_obsh_iskl(self, id_p, id_st4, mnt, yr, ds):
+        cursor = self.cnxn.cursor()
+        id_ = sql.create_id(name_t="BDDS_obsh_iskl")
+        zapros = "INSERT INTO BDDS_obsh_iskl (ID, Id_p, Id_st4, mnt, yr, ds) VALUES (" + str(id_) + ", " + str(id_p) + ", " + str(id_st4) + ", '" + mnt + "', " + str(yr) + ", " + str(ds) + ");"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+    def input_BDDS_obj_iskl(self, id_obj, id_st4, mnt, yr, ds):
+        cursor = self.cnxn.cursor()
+        id_ = sql.create_id(name_t="BDDS_obsh_iskl")
+        zapros = "INSERT INTO BDDS_obj_iskl (ID, Id_obj, Id_st4, mnt, yr, ds) VALUES (" + str(id_) + ", " + str(id_obj) + ", " + str(id_st4) + ", '" + mnt + "', " + str(yr) + ", " + str(ds) + ");"
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+    def take_fin_org(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT fin_org.ID, fin_org.Id_p, fin_org.nazv FROM fin_org WHERE Id_p = " + str(id_p) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = fin_org(data[i][0], data[i][1], del_probel(data[i][2]))
+            datas.append(el)
+        return datas
+    
+    def take_stat_fin_org(self, id_f_org):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT stat_fin_org.ID, stat_fin_org.Id_f_org, stat_fin_org.Id_st_4, stat_fin_org.mnt, stat_fin_org.yr, stat_fin_org.ds FROM stat_fin_org WHERE Id_f_org = " + str(id_f_org) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stat_fin_org(data[i][0], data[i][1], data[i][2], del_probel(data[i][3]), data[i][4], data[i][5])
+            datas.append(el)
+        return datas
+    
+    def take_BDDS_obj_iskl(self, id_obj):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT BDDS_obj_iskl.ID, BDDS_obj_iskl.Id_obj, BDDS_obj_iskl.Id_st4, BDDS_obj_iskl.mnt, BDDS_obj_iskl.yr, BDDS_obj_iskl.ds FROM BDDS_obj_iskl WHERE BDDS_obj_iskl.Id_obj = " + str(id_obj) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = BDDS(data[i][0], data[i][1], data[i][2], del_probel(data[i][3]), data[i][4], data[i][5])
             datas.append(el)
         return datas
 
