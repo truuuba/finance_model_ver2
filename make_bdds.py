@@ -397,9 +397,11 @@ def make_bdds(id_pr):
     #Переходим на статью 8.5 - по организациям исключениям
     stat_obj_iskl = []
     for el in object_str:
-        elem = sql.take_BDDS_obj_iskl(elem.id_)
+        elem = sql.take_BDDS_obj_iskl(el.id_)
         for element in elem:
             stat_obj_iskl.append(element)
+    stat_obj_iskl_3ur = sql.take_3_ur_for_85()
+    stat_obj_iskl_4ur = sql.take_4_ur_for_85()
 
     #Начинаем собирать 8 статью 
     arr_elems_1 = ['8 Финансовая деятельность'] #ID = 8
@@ -509,7 +511,158 @@ def make_bdds(id_pr):
                 arr_elems_4.append(Arr_elems_4)
 
     #Проход по 8.5 - исключения из объектов строения
+    arr_obj_ = [] 
+    elem_st2 = ['8.5 Специальные счета']   #ID = 64
+    for i in range(prod):
+        elem_st2.append(0)
+    #Идем по объектам строения
+    for el in object_str:
+        elem_obj_ = [el.nazv]
+        for i in range(prod):
+            elem_obj_.append(0)
+        #Идем по статьям
+        Arr_elems_3 = []
+        Arr_elems_2 = []
+        for el3 in stat_obj_iskl_3ur:
+            elem_st3 = [el3.code + " " + el3.nazv]
+            for i in range(prod):
+                elem_st3.append(0)
+            ARR_elems_4 = []
+            for el4 in stat_obj_iskl_4ur:
+                if el4.id_st == el3.id_:
+                    elem_st4 = [el4.code + " " + el4.nazv]
+                    for i in range(prod):
+                        elem_st4.append(0)
+                    #Проходимся по статьям
+                    for el_ in stat_obj_iskl:
+                        if el_.id_o == el.id_ and el_.id_st4 == el4.id_:
+                            for i, time in enumerate(shapka):
+                                temp = el_.mnt + " " + str(el_.yr)
+                                #Проверка по времени расходов
+                                if time == temp:
+                                    if el4.param == "поступление":
+                                        elem_st4[i] += float(el_.ds)
+                                        elem_st3[i] += float(el_.ds)
+                                        elem_st2[i] += float(el_.ds)
+                                        arr_elems_1[i] += float(el_.ds)
+                                    else:
+                                        elem_st4[i] -= float(el_.ds)
+                                        elem_st3[i] -= float(el_.ds)
+                                        elem_st2[i] -= float(el_.ds)
+                                        arr_elems_1[i] -= float(el_.ds)
+                    ARR_elems_4.append(arr_elems_4)
+            Arr_elems_3.append(elem_st3)
+            Arr_elems_4.append(ARR_elems_4)
+        arr_obj_.append(elem_obj_)
+    arr_elems_2.append(elem_st2)
+    arr_elems_3.append(Arr_elems_3)
+    arr_elems_4.append(Arr_elems_4)    
 
+    #Сборка в итоговую таблицу блядской 8 статьи
+    bdds_res.append(arr_elems_1)
+    cnt = 0
+    cnt_finorg = len(fin_organisation)
+    cnt_obj = 0
+    for i in range(len(arr_elems_2)):
+        bdds_res.append(arr_elems_2[i])
+        if cnt < cnt_finorg:
+            bdds_res.append(arr_fin_org[cnt])
+            for j in range(len(arr_elems_3[i])):
+                bdds_res.append(arr_elems_3[i][j+cnt])
+                for k in range(len(arr_elems_4[i][j+cnt])):
+                    bdds_res.append(arr_elems_4[i][j+cnt][k])
+            cnt += 1
+        elif i == (len(arr_elems_2) - 1):
+            bdds_res.append(arr_obj_[cnt_obj])
+            for j in range(len(arr_elems_3[i])):
+                bdds_res.append(arr_elems_3[i][j+cnt])
+                for k in range(len(arr_elems_4[i][j+cnt])):
+                    bdds_res.append(arr_elems_4[i][j+cnt][k])
+            cnt += 1
+            cnt_obj += 1
+        else:
+            for j in range(len(arr_elems_3[i])):
+                bdds_res.append(arr_elems_3[i][j+cnt])
+                for k in range(len(arr_elems_4[i][j+cnt])):
+                    bdds_res.append(arr_elems_4[i][j+cnt][k])
+
+    #Занимаемся 9ой статьей
+    arr_elems_1 = ['9 Поступления от Продажи недвижимости']
+    for i in range(prod):
+        arr_elems_1.append(0)
+    arr_obj_ = []
+    arr_elems_2 = []
+    arr_elems_3 = []
+    arr_elems_4 = []
+    stat_obj_iskl_2ur = sql.take_2_ur_for_9()
+    stat_obj_iskl_3ur = sql.take_3_ur_for_9()
+    stat_obj_iskl_4ur = sql.take_4_ur_for_9()
+    #Все данные по проектам 9 пунтке по объектам исключения
+    datas_obj_iskl = []
+    for el in object_str:
+        data_iskl_ = sql.take_data_obj_iskl_9()
+        for elem in data_iskl_:
+            datas_obj_iskl.append(elem)
+
+    #Идем по всему 9ому пункту
+    for el_ in object_str:
+        elem_obj_ = [el_.nazv]
+        for i in range(prod):
+            elem_obj_.append(0)
+        for el2 in stat_obj_iskl_2ur:
+            Arr_elems_3 = []
+            Arr_elems_4 = []
+            elem_st2 = [el2.code + " " + el2.nazv]
+            for i in range(prod):
+                elem_st2.append(0)
+            for el3 in stat_obj_iskl_3ur:
+                if el3.id_st == el2.id_:
+                    ARR_elems_4 = []
+                    elem_st3 = [el3.code + " " + el3.nazv]
+                    for i in range(prod):
+                        elem_st3.append(0)
+                    for el4 in stat_obj_iskl_4ur:
+                        if el4.id_st == el3.id_:
+                            elem_st4 = [el4.code + " " + el4.nazv]
+                            for i in range(prod):
+                                elem_st4.append(0)
+                            for elem in datas_obj_iskl:
+                                if elem.id_st4 == el4.id_:
+                                    for i, time in enumerate(shapka):
+                                        temp = elem.mnt + " " + str(elem.yr)
+                                        #Проверка по времени расходов
+                                        if time == temp:
+                                            if el4.param == "поступление":
+                                                elem_st4[i] += float(elem.ds)
+                                                elem_st3[i] += float(elem.ds)
+                                                elem_st2[i] += float(elem.ds)
+                                                arr_elems_1[i] += float(elem.ds)
+                                            else:
+                                                elem_st4[i] -= float(elem.ds)
+                                                elem_st3[i] -= float(elem.ds)
+                                                elem_st2[i] -= float(elem.ds)
+                                                arr_elems_1[i] -= float(elem.ds)                      
+                    ARR_elems_4.append(elem_st4)
+            Arr_elems_3.append(elem_st3)
+            Arr_elems_4.append(ARR_elems_4)
+        arr_elems_2.append(elem_st2)
+        arr_elems_3.append(Arr_elems_3)            
+        arr_obj_.append(elem_obj_)
+
+    #Вводим итоговые данные
+    bdds_res.append(arr_elems_1)
+    for i in len(arr_obj_):
+        bdds_res.append(arr_obj[i])
+        for j in range(len(arr_elems_2[i])):
+            bdds_res.append(arr_elems_2[i][j])
+            for k in range(len(arr_elems_3[i][j])):
+                bdds_res.append(arr_elems_3[i][j][k])
+                for l in range(len(arr_elems_4[i][j][k])):
+                    bdds_res.append(arr_elems_4[i][j][k][l])
+
+    #Идем по статьям для 10, 11, 12, 13, 14, 15, 16
+    for el1 in obsh_arr_st1:
+        
 
     for i in range(len(bdds_res)):
         print(bdds_res[i])
