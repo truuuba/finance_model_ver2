@@ -115,7 +115,7 @@ class win_bdds(CTk.CTk):
             stat_3 = sql.found_st_3_ur(id_st4)
              
             #Проверка на исключения БДДС общих
-            if stat_3.id_st == 71 or stat_3.id_st == 73 or stat_3.id_st == 75 or stat_3.id_st == 77 or stat_3.id_st == 79 or stat_3.id_st == 81 or stat_3.id_st == 83 or stat_3.id_st == 84 or stat_3.id_st == 85 or stat_3.id_st == 86:
+            if stat_3.id_st == 71 or stat_3.id_st == 73 or stat_3.id_st == 75 or stat_3.id_st == 77 or stat_3.id_st == 79 or stat_3.id_st == 81 or stat_3.id_st == 83 or stat_3.id_st == 84 or stat_3.id_st == 85 or stat_3.id_st == 86 or stat_3.id_st == 61 or stat_3.id_st == 62 or stat_3.id_st == 63:
                 sql.input_BDDS_obsh_iskl(id_p=self.id_p, id_st4=id_st4, mnt=self._list_[1].get(), yr=self._list_[2].get(), ds=self._list_[3].get())
                 mb.showinfo("Успешно!", "Данные были успешно добавлены")
             #Проверка на исключения БДДС объектов
