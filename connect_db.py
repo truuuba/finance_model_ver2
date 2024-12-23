@@ -765,7 +765,7 @@ class Sql:
         for el in datas:
             el.mnt = del_probel(el.mnt)
         return datas
-    
+
     def _take_obsh_stati_(self, id_p):
         cursor = self.cnxn.cursor()
         zapros = "SELECT obsh_stati.ID, obsh_stati.Id_st_3 FROM obsh_stati INNER JOIN st_3_ur ON obsh_stati.Id_st_3 = st_3_ur.ID WHERE obsh_stati.Id_p = " + str(id_p) + ";"
@@ -783,17 +783,6 @@ class Sql:
         cursor.execute(zapros)
         data = cursor.fetchall()
         return data[0][0]
-    
-    def found_obj_str_stati_(self, id_obj):
-        cursor = self.cnxn.cursor()
-        zapros = "SELECT ID, Id_st_3 FROM obj_stati WHERE Id_obj = " + str(id_obj) + ";"
-        cursor.execute(zapros)
-        data = cursor.fetchall()
-        datas = []
-        for i in range(len(data)):
-            el = stati(data[i][0], data[i][1])
-            datas.append(el)
-        return datas
     
     def take_st_ur_4(self, id_st3):
         cursor = self.cnxn.cursor()
@@ -970,18 +959,18 @@ class Sql:
         self.cnxn.commit()
         cursor.close()
     
-    def input_data_BDDS_obsh(self, id_obsh, id_st4, yr, mnt, ds):
+    def input_data_BDDS_obsh(self, id_p, id_st4, yr, mnt, ds):
         cursor = self.cnxn.cursor()
         id_ = sql.create_id("BDDS_obsh")
-        zapros = "INSERT INTO BDDS_obsh (ID, ID_st_obsh, Id_st4, yr, mnt, ds) VALUES (" + str(id_) + ", " + str(id_obsh) + ", " + str(id_st4) + ", " + str(yr) + ", '" + str(mnt) + "', " + str(ds) + ");"
+        zapros = "INSERT INTO BDDS_obsh (ID, Id_p, Id_st4, yr, mnt, ds) VALUES (" + str(id_) + ", " + str(id_p) + ", " + str(id_st4) + ", " + str(yr) + ", '" + str(mnt) + "', " + str(ds) + ");"
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
     
-    def input_data_BDDS_obj(self, id_st_obj, id_st4, yr, mnt, ds):
+    def input_data_BDDS_obj(self, id_obj, id_st4, yr, mnt, ds):
         cursor = self.cnxn.cursor()
         id_ = sql.create_id("BDDS_obj")
-        zapros = "INSERT INTO BDDS_obj (ID, ID_st_obJ, Id_st4, yr, mnt, ds) VALUES (" + str(id_) + ", " + str(id_st_obj) + ", " + str(id_st4) + ", " + str(yr) + ", '" + str(mnt) + "', " + str(ds) + ");"  
+        zapros = "INSERT INTO BDDS_obj (ID, Id_obJ, Id_st4, yr, mnt, ds) VALUES (" + str(id_) + ", " + str(id_obj) + ", " + str(id_st4) + ", " + str(yr) + ", '" + str(mnt) + "', " + str(ds) + ");"  
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
@@ -1002,7 +991,7 @@ class Sql:
     
     def take_data_BDDS_obsh(self, id_pr):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT BDDS_obsh.ID, BDDS_obsh.ID_st_obsh, BDDS_obsh.Id_st4, BDDS_obsh.mnt, BDDS_obsh.yr, BDDS_obsh.ds FROM BDDS_obsh INNER JOIN obsh_stati ON BDDS_obsh.ID_st_obsh = obsh_stati.ID WHERE obsh_stati.Id_p = " + str(id_pr) + ";"
+        zapros = "SELECT BDDS_obsh.ID, BDDS_obsh.Id_p, BDDS_obsh.Id_st4, BDDS_obsh.mnt, BDDS_obsh.yr, BDDS_obsh.ds FROM BDDS_obsh WHERE BDDS_obsh.Id_p = " + str(id_pr) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
         datas = []
@@ -1013,7 +1002,7 @@ class Sql:
     
     def take_data_BDDS_obj(self, id_pr):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT BDDS_obj.ID, BDDS_obj.ID_st_obj, BDDS_obj.Id_st4, BDDS_obj.mnt, BDDS_obj.yr, BDDS_obj.ds FROM BDDS_obj INNER JOIN obj_stati ON BDDS_obj.ID_st_obj = obj_stati.ID INNER JOIN object_str ON obj_stati.Id_obj = object_str.ID WHERE object_str.Id_p = " + str(id_pr) + ";"
+        zapros = "SELECT BDDS_obj.ID, BDDS_obj.Id_obj, BDDS_obj.Id_st4, BDDS_obj.mnt, BDDS_obj.yr, BDDS_obj.ds FROM BDDS_obj INNER JOIN object_str ON BDDS_obj.Id_obj = object_str.ID WHERE object_str.Id_p = " + str(id_pr) + ";"
         cursor.execute(zapros)
         data = cursor.fetchall()
         datas = []
@@ -1022,50 +1011,9 @@ class Sql:
             datas.append(el)
         return datas
 
-    def found_st_4_ur(self, id_):
-        cursor = self.cnxn.cursor()
-        zapros = "SELECT ID, Id_st_3, code, nazv, parametr FROM st_4_ur WHERE ID = " + str(id_) + ";"
-        cursor.execute(zapros)
-        data = cursor.fetchall()
-        datas = []
-        for i in range(len(data)):
-            el = st_ur4(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]), del_probel(data[i][4]))
-            datas.append(el)
-        return datas
-    
-    def found_st_3_ur(self, id_st4):
-        cursor = self.cnxn.cursor()
-        zapros = "SELECT st_3_ur.ID, st_3_ur.Id_st_2, st_3_ur.code, st_3_ur.nazv FROM st_3_ur INNER JOIN st_4_ur ON st_4_ur.Id_st_3 = st_3_ur.ID WHERE st_4_ur.ID = " + str(id_st4) + ";"
-        cursor.execute(zapros)
-        data = cursor.fetchall()
-        el = stati_ur(data[0][0], data[0][1], del_probel(data[0][2]), del_probel(data[0][3]))
-        return el
-    
-    def found_st_2_ur(self, id_st3):
-        cursor = self.cnxn.cursor()
-        zapros = "SELECT st_2_ur.ID, st_2_ur.Id_st_1, st_2_ur.code, st_2_ur.nazv FROM st_2_ur INNER JOIN st_3_ur ON st_3_ur.Id_st_2 = st_2_ur.ID WHERE st_3_ur.ID = " + str(id_st3) + ";"
-        cursor.execute(zapros)
-        data = cursor.fetchall()
-        datas = []
-        for i in range(len(data)):
-            el = stati_ur(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]))
-            datas.append(el)
-        return datas
-    
-    def found_st_1_ur(self, id_st1):
-        cursor = self.cnxn.cursor()
-        zapros = "SELECT st_1_ur.ID, st_1_ur.code, st_1_ur.nazv FROM st_1_ur INNER JOIN st_2_ur ON st_2_ur.Id_st_1 = st_1_ur.ID WHERE st_2_ur.ID = " + str(id_st1) + ";"
-        cursor.execute(zapros)
-        data = cursor.fetchall()
-        datas = []
-        for i in range(len(data)):
-            el = st_ur1(data[i][0], del_probel(data[i][1]), del_probel(data[i][2]))
-            datas.append(el)
-        return datas
-    
     def append_obj_4st(self):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT st_4_ur.ID, st_4_ur.Id_st_3, st_4_ur.code, st_4_ur.nazv, st_4_ur.parametr FROM st_4_ur INNER JOIN st_3_ur ON st_4_ur.Id_st_3 = st_3_ur.ID INNER JOIN st_2_ur ON st_3_ur.Id_st_2 = st_2_ur.ID WHERE st_2_ur.Id_st_1 = 9 OR st_3_ur.Id_st_2 = 64;"
+        zapros = "SELECT st_4_ur.ID, st_4_ur.Id_st_3, st_4_ur.code, st_4_ur.nazv, st_4_ur.parametr FROM st_4_ur INNER JOIN st_3_ur ON st_4_ur.Id_st_3 = st_3_ur.ID INNER JOIN st_2_ur ON st_3_ur.Id_st_2 = st_2_ur.ID WHERE st_2_ur.Id_st_1 = 9 OR st_3_ur.Id_st_2 = 64 OR st_2_ur.Id_st_1 = 4;"
         cursor.execute(zapros)
         data = cursor.fetchall()
         datas = []
@@ -1076,7 +1024,7 @@ class Sql:
     
     def append_obsh_4st(self):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT st_4_ur.ID, st_4_ur.Id_st_3, st_4_ur.code, st_4_ur.nazv, st_4_ur.parametr FROM st_4_ur INNER JOIN st_3_ur ON st_4_ur.Id_st_3 = st_3_ur.ID INNER JOIN st_2_ur ON st_3_ur.Id_st_2 = st_2_ur.ID WHERE st_2_ur.Id_st_1 = 16 OR st_3_ur.Id_st_2 = 71 OR st_3_ur.Id_st_2 = 73 OR st_3_ur.Id_st_2 = 75 OR st_3_ur.Id_st_2 = 77 OR st_3_ur.Id_st_2 = 79 OR st_3_ur.Id_st_2 = 81 OR st_3_ur.Id_st_2 = 61 OR st_3_ur.Id_st_2 = 62 OR st_3_ur.Id_st_2 = 63;"
+        zapros = "SELECT st_4_ur.ID, st_4_ur.Id_st_3, st_4_ur.code, st_4_ur.nazv, st_4_ur.parametr FROM st_4_ur INNER JOIN st_3_ur ON st_4_ur.Id_st_3 = st_3_ur.ID INNER JOIN st_2_ur ON st_3_ur.Id_st_2 = st_2_ur.ID WHERE st_2_ur.Id_st_1 = 1 OR st_2_ur.Id_st_1 = 2 OR st_2_ur.Id_st_1 = 3 OR st_2_ur.Id_st_1 = 5 OR st_2_ur.Id_st_1 = 6 OR st_2_ur.Id_st_1 = 7 OR st_2_ur.Id_st_1 = 16 OR st_2_ur.Id_st_1 = 10 OR st_2_ur.Id_st_1 = 11 OR st_2_ur.Id_st_1 = 12 OR st_2_ur.Id_st_1 = 13 OR st_2_ur.Id_st_1 = 14 OR st_2_ur.Id_st_1 = 15 OR st_3_ur.Id_st_2 = 61 OR st_3_ur.Id_st_2 = 62 OR st_3_ur.Id_st_2 = 63;"
         cursor.execute(zapros)
         data = cursor.fetchall()
         datas = []
@@ -1084,22 +1032,6 @@ class Sql:
             el = st_ur4(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]), del_probel(data[i][4]))
             datas.append(el)
         return datas
-    
-    def input_BDDS_obsh_iskl(self, id_p, id_st4, mnt, yr, ds):
-        cursor = self.cnxn.cursor()
-        id_ = sql.create_id(name_t="BDDS_obsh_iskl")
-        zapros = "INSERT INTO BDDS_obsh_iskl (ID, Id_p, Id_st4, mnt, yr, ds) VALUES (" + str(id_) + ", " + str(id_p) + ", " + str(id_st4) + ", '" + mnt + "', " + str(yr) + ", " + str(ds) + ");"
-        cursor.execute(zapros)
-        self.cnxn.commit()
-        cursor.close()
-
-    def input_BDDS_obj_iskl(self, id_obj, id_st4, mnt, yr, ds):
-        cursor = self.cnxn.cursor()
-        id_ = sql.create_id(name_t="BDDS_obj_iskl")
-        zapros = "INSERT INTO BDDS_obj_iskl (ID, Id_obj, Id_st4, mnt, yr, ds) VALUES (" + str(id_) + ", " + str(id_obj) + ", " + str(id_st4) + ", '" + mnt + "', " + str(yr) + ", " + str(ds) + ");"
-        cursor.execute(zapros)
-        self.cnxn.commit()
-        cursor.close()
 
     def take_fin_org(self, id_p):
         cursor = self.cnxn.cursor()
@@ -1120,17 +1052,6 @@ class Sql:
         datas = []
         for i in range(len(data)):
             el = stat_fin_org(data[i][0], data[i][1], data[i][2], del_probel(data[i][3]), data[i][4], data[i][5])
-            datas.append(el)
-        return datas
-    
-    def take_BDDS_obj_iskl(self, id_obj):
-        cursor = self.cnxn.cursor()
-        zapros = "SELECT BDDS_obj_iskl.ID, BDDS_obj_iskl.Id_obj, BDDS_obj_iskl.Id_st4, BDDS_obj_iskl.mnt, BDDS_obj_iskl.yr, BDDS_obj_iskl.ds FROM BDDS_obj_iskl WHERE BDDS_obj_iskl.Id_obj = " + str(id_obj) + ";"
-        cursor.execute(zapros)
-        data = cursor.fetchall()
-        datas = []
-        for i in range(len(data)):
-            el = BDDS(data[i][0], data[i][1], data[i][2], del_probel(data[i][3]), data[i][4], data[i][5])
             datas.append(el)
         return datas
     
@@ -1188,59 +1109,15 @@ class Sql:
             el = st_ur4(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]), del_probel(data[i][4]))
             datas.append(el)
         return datas
-
-    def take_data_obj_iskl_9(self, id_obj):
-        cursor = self.cnxn.cursor()
-        zapros = "SELECT BDDS_obj_iskl.ID, BDDS_obj_iskl.Id_obj, BDDS_obj_iskl.Id_st4, BDDS_obj_iskl.mnt, BDDS_obj_iskl.yr, BDDS_obj_iskl.ds FROM BDDS_obj_iskl INNER JOIN st_4_ur ON BDDS_obj_iskl.Id_st4 = st_4_ur.ID INNER JOIN st_3_ur ON st_4_ur.Id_st_3 = st_3_ur.ID INNER JOIN st_2_ur ON st_3_ur.Id_st_2 = st_2_ur.ID WHERE BDDS_obj_iskl.Id_obj = " + str(id_obj) + " AND st_2_ur.Id_st_1 = 9;"
-        cursor.execute(zapros)
-        data = cursor.fetchall()
-        datas = []
-        for i in range(len(data)):
-            el = BDDS(data[i][0], data[i][1], data[i][2], del_probel(data[i][3]), data[i][4], data[i][5])
-            datas.append(el)
-        return datas
-
+    
     def take_obsh_iskl_last_2(self):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT st_2_ur.ID, st_2_ur.Id_st_1, st_2_ur.code, st_2_ur.nazv FROM st_2_ur WHERE ID = 72 OR ID = 74 OR ID = 76 OR ID = 78 OR ID = 80 OR ID = 82 OR Id_st_1 = 16;"
+        zapros = "SELECT * FROM st_2_ur WHERE Id_st_1 = 10 OR Id_st_1 = 11 OR Id_st_1 = 12 OR Id_st_1 = 13 OR Id_st_1 = 14 OR Id_st_1 = 15 OR Id_st_1 = 16;"
         cursor.execute(zapros)
         data = cursor.fetchall()
         datas = []
         for i in range(len(data)):
             el = stati_ur(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]))
-            datas.append(el)
-        return datas
-    
-    def take_obsh_iskl_last_3(self):
-        cursor = self.cnxn.cursor()
-        zapros = "SELECT st_3_ur.ID, st_3_ur.Id_st_2, st_3_ur.code, st_3_ur.nazv FROM st_3_ur INNER JOIN st_2_ur ON st_3_ur.Id_st_2 = st_2_ur.ID WHERE st_2_ur.ID = 72 OR st_2_ur.ID = 74 OR st_2_ur.ID = 76 OR st_2_ur.ID = 78 OR st_2_ur.ID = 80 OR st_2_ur.ID = 82 OR st_2_ur.Id_st_1 = 16;"
-        cursor.execute(zapros)
-        data = cursor.fetchall()
-        datas = []
-        for i in range(len(data)):
-            el = stati_ur(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]))
-            datas.append(el)
-        return datas
-    
-    def take_obsh_iskl_last_4(self):
-        cursor = self.cnxn.cursor()
-        zapros = "SELECT st_4_ur.ID, st_4_ur.Id_st_3, st_4_ur.code, st_4_ur.nazv, st_4_ur.parametr FROM st_4_ur INNER JOIN st_3_ur ON st_4_ur.Id_st_3 = st_3_ur.ID INNER JOIN st_2_ur ON st_3_ur.Id_st_2 = st_2_ur.ID WHERE st_2_ur.ID = 72 OR st_2_ur.ID = 74 OR st_2_ur.ID = 76 OR st_2_ur.ID = 78 OR st_2_ur.ID = 80 OR st_2_ur.ID = 82 OR st_2_ur.Id_st_1 = 16;"
-        cursor.execute(zapros)
-        data = cursor.fetchall()
-        datas = []
-        for i in range(len(data)):
-            el = st_ur4(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]), del_probel(data[i][4]))
-            datas.append(el)
-        return datas
-    
-    def BDDS_data_obsh_iskl(self, id_p):
-        cursor = self.cnxn.cursor()
-        zapros = "SELECT BDDS_obsh_iskl.ID, BDDS_obsh_iskl.Id_p, BDDS_obsh_iskl.Id_st4, BDDS_obsh_iskl.mnt, BDDS_obsh_iskl.yr, BDDS_obsh_iskl.ds FROM BDDS_obsh_iskl INNER JOIN st_4_ur ON BDDS_obsh_iskl.Id_st4 = st_4_ur.ID INNER JOIN st_3_ur ON st_4_ur.Id_st_3 = st_3_ur.ID INNER JOIN st_2_ur ON st_3_ur.Id_st_2 = st_2_ur.ID WHERE (st_2_ur.ID = 72 OR st_2_ur.ID = 74 OR st_2_ur.ID = 76 OR st_2_ur.ID = 78 OR st_2_ur.ID = 80 OR st_2_ur.ID = 82 OR st_2_ur.Id_st_1 = 16) AND (BDDS_obsh_iskl.Id_p = " + str(id_p) + ");"
-        cursor.execute(zapros)
-        data = cursor.fetchall()
-        datas = []
-        for i in range(len(data)):
-            el = BDDS(data[i][0], data[i][1], data[i][2], del_probel(data[i][3]), data[i][4], data[i][5])
             datas.append(el)
         return datas
     
@@ -1252,17 +1129,6 @@ class Sql:
         datas = []
         for i in range(len(data)):
             el = st_ur1(data[i][0], del_probel(data[i][1]), del_probel(data[i][2]))
-            datas.append(el)
-        return datas
-    
-    def take_bdds_obsh_iskl(self, id_p):
-        cursor = self.cnxn.cursor()
-        zapros = "SELECT BDDS_obsh_iskl.ID, BDDS_obsh_iskl.Id_p, BDDS_obsh_iskl.Id_st4, BDDS_obsh_iskl.mnt, BDDS_obsh_iskl.yr, BDDS_obsh_iskl.ds FROM BDDS_obsh_iskl WHERE Id_p = " + str(id_p) + ";"
-        cursor.execute(zapros)
-        data = cursor.fetchall()
-        datas = []
-        for i in range(len(data)):
-            el = BDDS(data[i][0], data[i][1], data[i][2], del_probel(data[i][3]), data[i][4], data[i][5])
             datas.append(el)
         return datas
     
@@ -1287,6 +1153,106 @@ class Sql:
             el = stati_ur(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]))
             datas.append(el)
         return datas
+    
+    def take_obsh_arr567_st1(self):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM st_1_ur WHERE ID = 5 OR ID = 6 OR ID = 7;"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = st_ur1(data[i][0], del_probel(data[i][1]), del_probel(data[i][2]))
+            datas.append(el)
+        return datas
+    
+    def take_obsh_arr567_st2(self):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM st_2_ur WHERE st_2_ur.Id_st_1 = 5 OR st_2_ur.Id_st_1 = 6 OR st_2_ur.Id_st_1 = 7;"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stati_ur(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]))
+            datas.append(el)
+        return datas
+    
+    def take_level_down_st3(self, id_st_2):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM st_3_ur WHERE st_3_ur.Id_st_2 = " + str(id_st_2) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stati_ur(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]))
+            datas.append(el)
+        return datas
+
+    def take_level_down_st4(self, id_st_3):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM st_4_ur WHERE st_4_ur.Id_st_3 = " + str(id_st_3) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = st_ur4(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]), del_probel(data[i][4]))
+            datas.append(el)
+        return datas
+
+    def take_stati123_level1(self):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM st_1_ur WHERE ID = 1 OR ID = 2 OR ID = 3;"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = st_ur1(data[i][0], del_probel(data[i][1]), del_probel(data[i][2]))
+            datas.append(el)
+        return datas
+    
+    def take_stati123_level2(self):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM st_2_ur WHERE st_2_ur.Id_st_1 = 1 OR st_2_ur.Id_st_1 = 2 OR st_2_ur.Id_st_1 = 3;"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stati_ur(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]))
+            datas.append(el)
+        return datas
+    
+    def take_stati4_level1(self):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM st_1_ur WHERE ID = 4;"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = st_ur1(data[i][0], del_probel(data[i][1]), del_probel(data[i][2]))
+            datas.append(el)
+        return datas
+    
+    def take_stati4_level2(self):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM st_2_ur WHERE st_2_ur.Id_st_1 = 4;"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stati_ur(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]))
+            datas.append(el)
+        return datas
+
+    def take_stati_fin_level3(self):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT * FROM st_3_ur WHERE Id_st_2 = 60;"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = stati_ur(data[i][0], data[i][1], del_probel(data[i][2]), del_probel(data[i][3]))
+            datas.append(el)
+        return datas
+
 
 def make_arr_list(arr):
     arr2 = []
