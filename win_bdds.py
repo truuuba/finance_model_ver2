@@ -7,16 +7,10 @@ CTk.set_appearance_mode("dark")
 CTk.set_default_color_theme("green")
 
 class BDDS_win(CTk.CTkFrame):
-    def __init__(self, master, stati, _list_, prov_obj):
+    def __init__(self, master, _list_, prov_obj):
         super().__init__(master, width=1000, height=250)
-        #Создаем массив по 4 уровню
         arr = []
-        for i in range(len(stati)):
-            elem = sql.take_st_ur_4(stati[i].id_o)
-            for el in elem:
-                arr.append(el.code + " " + el.nazv) 
-
-        #Добавляем оставшиеся статьи, которые не входят в БДР
+        #Создаем массив по статьям
         if prov_obj:
             mass_obj = sql.append_obj_4st()
             for i in range(len(mass_obj)):
@@ -84,13 +78,10 @@ class win_bdds(CTk.CTk):
         self.ttle_st.grid(row=3, column=0, padx=(5,5), pady=(5,5))
         prov_obj = False
 
-        if self.nazvanie == 'Общие статьи':
-            self.stati = sql._take_obsh_stati_(id_p=self.id_p)
-        else:
+        if not(self.nazvanie == 'Общие статьи'):
             self.id_obj = sql.found_id_obj(nazv=self.nazvanie, id_p=self.id_p)
-            self.stati = sql.found_obj_str_stati_(self.id_obj)
             prov_obj = True
-        self.win_BDDS = BDDS_win(self, stati=self.stati, _list_=self._list_, prov_obj=prov_obj)
+        self.win_BDDS = BDDS_win(self, _list_=self._list_, prov_obj=prov_obj)
         self.win_BDDS.grid(row=4, column=0, padx=(5,5), pady=(5,5))
 
         self.but_input = CTk.CTkButton(master=self, text="Данные введены", command=self.input_data_bdds)
@@ -111,28 +102,11 @@ class win_bdds(CTk.CTk):
             z = z.split()
             #Поиск айдишника уровня статей
             id_st4 = sql.take_st4_of_code(z[0])
-            #Поиск айдишника по 3 статьям
-            stat_3 = sql.found_st_3_ur(id_st4)
-             
-            #Проверка на исключения БДДС общих
-            if stat_3.id_st == 71 or stat_3.id_st == 73 or stat_3.id_st == 75 or stat_3.id_st == 77 or stat_3.id_st == 79 or stat_3.id_st == 81 or stat_3.id_st == 83 or stat_3.id_st == 84 or stat_3.id_st == 85 or stat_3.id_st == 86 or stat_3.id_st == 61 or stat_3.id_st == 62 or stat_3.id_st == 63:
-                sql.input_BDDS_obsh_iskl(id_p=self.id_p, id_st4=id_st4, mnt=self._list_[1].get(), yr=self._list_[2].get(), ds=self._list_[3].get())
-                mb.showinfo("Успешно!", "Данные были успешно добавлены")
-            #Проверка на исключения БДДС объектов
-            elif (stat_3.id_st >= 64) and (stat_3.id_st <= 70):
-                sql.input_BDDS_obj_iskl(id_obj=self.id_obj, id_st4=id_st4, mnt=self._list_[1].get(), yr=self._list_[2].get(), ds=self._list_[3].get())
-                mb.showinfo("Успешно!", "Данные были успешно добавлены")
-            #Остальные статьи, которые идут и по БДР
+            #Вводим данные в БДДС
+            if self.nazvanie == 'Общие статьи':
+                sql.input_data_BDDS_obsh(self.id_p, id_st4, self._list_[2].get(), self._list_[1].get(), self._list_[3].get())
             else:
-                id_obsh = 0
-                for el in self.stati:
-                    if el.id_o == stat_3.id_:
-                        id_obsh = el.id_
-                #Вводим данные в БДДС
-                if self.nazvanie == 'Общие статьи':
-                    sql.input_data_BDDS_obsh(id_obsh, id_st4, self._list_[2].get(), self._list_[1].get(), self._list_[3].get())
-                else:
-                    sql.input_data_BDDS_obj(id_obsh, id_st4, self._list_[2].get(), self._list_[1].get(), self._list_[3].get())
-                mb.showinfo("Успешно!", "Данные были успешно добавлены")
+                sql.input_data_BDDS_obj(self.id_obj, id_st4, self._list_[2].get(), self._list_[1].get(), self._list_[3].get())
+            mb.showinfo("Успешно!", "Данные были успешно добавлены")
 
                 
