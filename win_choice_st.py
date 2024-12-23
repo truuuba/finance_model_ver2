@@ -98,4 +98,3 @@ class win_choice_stati(CTk.CTk):
             self.withdraw()
             a = win_new_project(id_p)
             a.mainloop()
-
